@@ -1,0 +1,11 @@
+<div class="player-container">
+    <div class="header">
+        <button (click)="goBack()" class="back-btn">← Back to Dashboard</button>
+    </div>
+    <div class="video-wrapper">
+        <video #videoPlayer controls autoplay class="video-js"></video>
+    </div>
+    <div *ngIf="error" class="error-message">
+        {{ error }}
+    </div>
+</div>

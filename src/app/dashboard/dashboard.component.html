@@ -1,0 +1,58 @@
+<div class="dashboard-container">
+    <header>
+        <h1>IPTV Dashboard</h1>
+        <button (click)="logout()" class="logout-btn">Logout</button>
+    </header>
+
+    <div class="controls">
+        <div class="filter-group">
+            <label for="category">Category:</label>
+            <select id="category" [(ngModel)]="selectedCategoryId" (change)="onCategoryChange()">
+                <option value="">All Categories</option>
+                <option *ngFor="let cat of categories" [value]="cat.category_id">
+                    {{ cat.category_name }}
+                </option>
+            </select>
+        </div>
+        <div class="stats">
+            Showing {{ filteredStreams.length }} streams
+        </div>
+    </div>
+
+    <div class="content" *ngIf="!loading; else loader">
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Icon</th>
+                        <th>Name</th>
+                        <th>Category ID</th>
+                        <th>Stream Type</th>
+                        <th>Direct Source</th>
+                        <th>Archive</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let stream of filteredStreams" (click)="playStream(stream)" class="clickable-row">
+                        <td>
+                            <img [src]="stream.stream_icon" alt="" class="channel-icon"
+                                onerror="this.style.display='none'" *ngIf="stream.stream_icon">
+                        </td>
+                        <td>{{ stream.name }}</td>
+                        <td>{{ stream.category_id }}</td>
+                        <td>{{ stream.stream_type }}</td>
+                        <td>{{ stream.direct_source }}</td>
+                        <td>{{ stream.tv_archive ? 'Yes' : 'No' }}</td>
+                    </tr>
+                    <tr *ngIf="filteredStreams.length === 0">
+                        <td colspan="6" class="no-data">No streams found in this category.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <ng-template #loader>
+        <div class="loader">Loading content...</div>
+    </ng-template>
+</div>
