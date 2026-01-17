@@ -1,0 +1,58 @@
+<div class="details-container" *ngIf="seriesInfo; else loader">
+    <button (click)="backToSeries()" class="back-btn">← Back to Series</button>
+
+    <div class="hero">
+        <div class="poster">
+            <img [src]="seriesInfo.info.cover" alt="{{ seriesInfo.info.name }}"
+                onerror="this.src='assets/no-poster.jpeg'">
+        </div>
+        <div class="info">
+            <h1>{{ seriesInfo.info.name }}</h1>
+            <div class="meta">
+                <span *ngIf="seriesInfo.info.releaseDate">{{ seriesInfo.info.releaseDate }}</span>
+                <span *ngIf="seriesInfo.info.rating">★ {{ seriesInfo.info.rating }}</span>
+                <span *ngIf="seriesInfo.info.genre">{{ seriesInfo.info.genre }}</span>
+            </div>
+            <p class="plot">{{ seriesInfo.info.plot }}</p>
+            <div class="cast" *ngIf="seriesInfo.info.cast">
+                <strong>Cast:</strong> {{ seriesInfo.info.cast }}
+            </div>
+            <div class="director" *ngIf="seriesInfo.info.director">
+                <strong>Director:</strong> {{ seriesInfo.info.director }}
+            </div>
+        </div>
+    </div>
+
+    <div class="seasons-section">
+        <h2>Seasons</h2>
+        <div class="season-tabs">
+            <button *ngFor="let s of seasons" [class.active]="s === selectedSeason" (click)="selectSeason(s)">
+                Season {{ s }}
+            </button>
+        </div>
+    </div>
+
+    <div class="episodes-section">
+        <h2>Episodes</h2>
+        <div class="episodes-list">
+            <div *ngFor="let ep of episodes" class="episode-item" (click)="playEpisode(ep)">
+                <div class="ep-num">{{ ep.episode_num }}</div>
+                <div class="ep-img" *ngIf="ep.info && ep.info.movie_image">
+                    <img [src]="ep.info.movie_image" onerror="this.style.display='none'">
+                </div>
+                <div class="ep-info">
+                    <h4>{{ ep.title }}</h4>
+                    <span class="duration" *ngIf="ep.info && ep.info.duration">{{ ep.info.duration }}</span>
+                </div>
+                <div class="play-icon">▶</div>
+            </div>
+            <div *ngIf="episodes.length === 0" class="no-data">
+                No episodes found for this season.
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #loader>
+    <div class="loader">Loading series details...</div>
+</ng-template>

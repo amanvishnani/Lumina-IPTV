@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { XtreamCategory, XtreamCredentials, XtreamLoginResponse, XtreamStream } from '../types';
+import { XtreamCategory, XtreamCredentials, XtreamLoginResponse, XtreamStream, XtreamVodStream, XtreamSeries, XtreamSeriesInfo } from '../types';
 
 @Injectable({
     providedIn: 'root'
@@ -43,6 +43,52 @@ export class XtreamService {
             apiUrl += `&category_id=${categoryId}`;
         }
         return this.http.get<XtreamStream[]>(apiUrl);
+    }
+
+    getVodCategories(): Observable<XtreamCategory[]> {
+        const creds = this.getCredentials();
+        if (!creds) throw new Error('No credentials found');
+        const { url, username, password } = creds;
+        const apiUrl = `${this.formatUrl(url)}/player_api.php?username=${username}&password=${password}&action=get_vod_categories`;
+        return this.http.get<XtreamCategory[]>(apiUrl);
+    }
+
+    getVodStreams(categoryId?: string): Observable<XtreamVodStream[]> {
+        const creds = this.getCredentials();
+        if (!creds) throw new Error('No credentials found');
+        const { url, username, password } = creds;
+        let apiUrl = `${this.formatUrl(url)}/player_api.php?username=${username}&password=${password}&action=get_vod_streams`;
+        if (categoryId) {
+            apiUrl += `&category_id=${categoryId}`;
+        }
+        return this.http.get<XtreamVodStream[]>(apiUrl);
+    }
+
+    getSeriesCategories(): Observable<XtreamCategory[]> {
+        const creds = this.getCredentials();
+        if (!creds) throw new Error('No credentials found');
+        const { url, username, password } = creds;
+        const apiUrl = `${this.formatUrl(url)}/player_api.php?username=${username}&password=${password}&action=get_series_categories`;
+        return this.http.get<XtreamCategory[]>(apiUrl);
+    }
+
+    getSeries(categoryId?: string): Observable<XtreamSeries[]> {
+        const creds = this.getCredentials();
+        if (!creds) throw new Error('No credentials found');
+        const { url, username, password } = creds;
+        let apiUrl = `${this.formatUrl(url)}/player_api.php?username=${username}&password=${password}&action=get_series`;
+        if (categoryId) {
+            apiUrl += `&category_id=${categoryId}`;
+        }
+        return this.http.get<XtreamSeries[]>(apiUrl);
+    }
+
+    getSeriesInfo(seriesId: number): Observable<XtreamSeriesInfo> {
+        const creds = this.getCredentials();
+        if (!creds) throw new Error('No credentials found');
+        const { url, username, password } = creds;
+        const apiUrl = `${this.formatUrl(url)}/player_api.php?username=${username}&password=${password}&action=get_series_info&series_id=${seriesId}`;
+        return this.http.get<XtreamSeriesInfo>(apiUrl);
     }
 
     saveCredentials(credentials: XtreamCredentials) {

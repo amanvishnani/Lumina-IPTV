@@ -1,0 +1,188 @@
+.details-container {
+    padding: 2rem;
+    color: #e0e0e0;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.back-btn {
+    background: none;
+    border: 1px solid #444;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-bottom: 2rem;
+}
+
+.hero {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.poster {
+    flex-shrink: 0;
+    width: 300px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.poster img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.info {
+    flex: 1;
+}
+
+.info h1 {
+    font-size: 2.5rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.meta {
+    display: flex;
+    gap: 1.5rem;
+    color: #ffd700;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+}
+
+.plot {
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    color: #ccc;
+}
+
+.cast,
+.director {
+    margin-bottom: 0.5rem;
+    color: #aaa;
+}
+
+.cast strong,
+.director strong {
+    color: #fff;
+}
+
+.seasons-section {
+    margin-bottom: 2rem;
+}
+
+.season-tabs {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+}
+
+.season-tabs button {
+    background: #2a2a2a;
+    border: 1px solid #444;
+    color: #e0e0e0;
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.season-tabs button.active {
+    background: #007bff;
+    color: #fff;
+}
+
+.episodes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.episode-item {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: #1e1e1e;
+    padding: 1rem;
+    border: 1px solid #333;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.episode-item:hover {
+    background: #2a2a2a;
+}
+
+.ep-num {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #007bff;
+    width: 30px;
+    text-align: center;
+}
+
+.ep-img {
+    width: 150px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.ep-img img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.ep-info {
+    flex: 1;
+}
+
+.ep-info h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+.duration {
+    font-size: 0.9rem;
+    color: #aaa;
+}
+
+.play-icon {
+    font-size: 1.5rem;
+    color: #007bff;
+    margin-right: 1rem;
+}
+
+.loader,
+.no-data {
+    text-align: center;
+    padding: 3rem;
+    font-size: 1.2rem;
+    color: #888;
+}
+
+@media (max-width: 768px) {
+    .hero {
+        flex-direction: column;
+    }
+
+    .poster {
+        width: 200px;
+        margin: 0 auto;
+    }
+
+    .info {
+        text-align: center;
+    }
+
+    .meta {
+        justify-content: center;
+    }
+}

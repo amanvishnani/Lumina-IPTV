@@ -1,7 +1,11 @@
 <div class="dashboard-container">
     <header>
         <h1>IPTV Dashboard</h1>
-        <button (click)="logout()" class="logout-btn">Logout</button>
+        <nav class="main-nav">
+            <button (click)="goToMovies()" class="nav-btn">Movies</button>
+            <button (click)="goToSeries()" class="nav-btn">TV Series</button>
+            <button (click)="logout()" class="logout-btn">Logout</button>
+        </nav>
     </header>
 
     <div class="controls">

@@ -1,0 +1,46 @@
+<div class="vod-container">
+    <header>
+        <button (click)="backToDashboard()" class="back-btn">← Back</button>
+        <h1>Movies</h1>
+    </header>
+
+    <div class="controls">
+        <div class="filter-group">
+            <label for="category">Category:</label>
+            <select id="category" [(ngModel)]="selectedCategoryId" (change)="onCategoryChange()">
+                <option value="">Select Category</option>
+                <option *ngFor="let cat of categories" [value]="cat.category_id">
+                    {{ cat.category_name }}
+                </option>
+            </select>
+        </div>
+        <div class="stats" *ngIf="filteredStreams.length">
+            Showing {{ filteredStreams.length }} movies
+        </div>
+    </div>
+
+    <div class="content" *ngIf="!loading; else loader">
+        <div class="grid-container">
+            <div *ngFor="let stream of filteredStreams" (click)="playStream(stream)" class="movie-card">
+                <div class="poster-wrapper">
+                    <img [src]="stream.stream_icon" alt="{{ stream.name }}" onerror="this.src='assets/no-poster.jpeg'"
+                        loading="lazy">
+                    <div class="rating" *ngIf="stream.rating">★ {{ stream.rating }}</div>
+                </div>
+                <div class="movie-info">
+                    <h3>{{ stream.name }}</h3>
+                </div>
+            </div>
+            <div *ngIf="filteredStreams.length === 0 && selectedCategoryId" class="no-data">
+                No movies found in this category.
+            </div>
+            <div *ngIf="!selectedCategoryId" class="no-data">
+                Please select a category to view movies.
+            </div>
+        </div>
+    </div>
+
+    <ng-template #loader>
+        <div class="loader">Loading movies...</div>
+    </ng-template>
+</div>

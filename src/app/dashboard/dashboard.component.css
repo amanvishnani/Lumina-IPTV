@@ -10,12 +10,33 @@ header {
     align-items: center;
     margin-bottom: 2rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #333;
 }
 
 h1 {
     margin: 0;
-    color: #333;
+    color: #e0e0e0;
+}
+
+.main-nav {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.nav-btn {
+    padding: 0.5rem 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.nav-btn:hover {
+    background-color: #0056b3;
 }
 
 .logout-btn {
@@ -33,7 +54,7 @@ h1 {
     align-items: center;
     margin-bottom: 1rem;
     padding: 1rem;
-    background: #f8f9fa;
+    background: #1f1f1f;
     border-radius: 8px;
 }
 
@@ -45,7 +66,9 @@ h1 {
 
 select {
     padding: 0.5rem;
-    border: 1px solid #ddd;
+    background: #333;
+    color: #fff;
+    border: 1px solid #444;
     border-radius: 4px;
     min-width: 200px;
 }
@@ -53,25 +76,26 @@ select {
 table {
     width: 100%;
     border-collapse: collapse;
-    background: white;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    background: #1e1e1e;
+    color: #e0e0e0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 th,
 td {
     padding: 12px;
     text-align: left;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #333;
 }
 
 th {
-    background-color: #f8f9fa;
+    background-color: #2a2a2a;
     font-weight: 600;
-    color: #555;
+    color: #e0e0e0;
 }
 
 tr:hover {
-    background-color: #f5f5f5;
+    background-color: #333;
 }
 
 .channel-icon {
@@ -79,26 +103,27 @@ tr:hover {
     height: 40px;
     object-fit: contain;
     border-radius: 4px;
-    background: #eee;
+    background: #333;
 }
 
 .loader {
     text-align: center;
     padding: 2rem;
     font-size: 1.2rem;
-    color: #666;
+    color: #aaa;
 }
 
 .no-data {
     text-align: center;
     padding: 2rem;
+    padding: 2rem;
     color: #888;
 }
+
 .clickable-row {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .clickable-row:hover {
-  background-color: #f1f1f1;
+    background-color: #2a2a2a;
 }
-

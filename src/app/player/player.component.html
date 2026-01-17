@@ -1,11 +1,15 @@
 <div class="player-container">
-    <div class="header">
-        <button (click)="goBack()" class="back-btn">← Back to Dashboard</button>
-    </div>
+    <button (click)="goBack()" class="back-btn">← Back</button>
     <div class="video-wrapper">
-        <video #videoPlayer controls autoplay class="video-js"></video>
+        <video #videoPlayer class="video-js vjs-default-skin vjs-big-play-centered"></video>
     </div>
-    <div *ngIf="error" class="error-message">
-        {{ error }}
+    <div class="error-message" *ngIf="error">
+        <p>{{ error }}</p>
+        <p class="suggestion">
+            If playback fails, some formats (MKV, AVI) may not be supported by your browser.
+            <br>
+            <button (click)="copyStreamUrl()" class="copy-btn">Copy Stream URL</button>
+            and try playing it in VLC Media Player.
+        </p>
     </div>
 </div>

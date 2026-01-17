@@ -70,6 +70,14 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['/play', stream.stream_id, stream.stream_type]);
   }
 
+  goToMovies() {
+    this.router.navigate(['/movies']);
+  }
+
+  goToSeries() {
+    this.router.navigate(['/series']);
+  }
+
   logout() {
     this.xtreamService.logout();
     this.router.navigate(['/login']);

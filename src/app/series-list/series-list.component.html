@@ -1,0 +1,45 @@
+<div class="series-container">
+    <header>
+        <button (click)="backToDashboard()" class="back-btn">← Back</button>
+        <h1>TV Series</h1>
+    </header>
+
+    <div class="controls">
+        <div class="filter-group">
+            <label for="category">Category:</label>
+            <select id="category" [(ngModel)]="selectedCategoryId" (change)="onCategoryChange()">
+                <option value="">Select Category</option>
+                <option *ngFor="let cat of categories" [value]="cat.category_id">
+                    {{ cat.category_name }}
+                </option>
+            </select>
+        </div>
+        <div class="stats" *ngIf="filteredSeries.length">
+            Showing {{ filteredSeries.length }} series
+        </div>
+    </div>
+
+    <div class="content" *ngIf="!loading; else loader">
+        <div class="grid-container">
+            <div *ngFor="let s of filteredSeries" (click)="openSeries(s)" class="series-card">
+                <div class="poster-wrapper">
+                    <img [src]="s.cover" alt="{{ s.name }}" onerror="this.src='assets/no-poster.jpeg'" loading="lazy">
+                    <div class="rating" *ngIf="s.rating">★ {{ s.rating }}</div>
+                </div>
+                <div class="series-info">
+                    <h3>{{ s.name }}</h3>
+                </div>
+            </div>
+            <div *ngIf="filteredSeries.length === 0 && selectedCategoryId" class="no-data">
+                No series found in this category.
+            </div>
+            <div *ngIf="!selectedCategoryId" class="no-data">
+                Please select a category to view series.
+            </div>
+        </div>
+    </div>
+
+    <ng-template #loader>
+        <div class="loader">Loading series...</div>
+    </ng-template>
+</div>

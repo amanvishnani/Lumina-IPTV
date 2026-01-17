@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild, OnDestroy, inject, ViewEncapsulation } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { XtreamService } from '../services/xtream.service';
 import videojs from 'video.js';
@@ -17,11 +17,13 @@ export class PlayerComponent implements OnInit, OnDestroy {
 
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private location = inject(Location);
   private xtreamService = inject(XtreamService);
 
   private player: any;
   error = '';
   streamUrl = '';
+  streamType = 'live'; // default
 
   ngOnInit() {
     if (!this.xtreamService.isLoggedIn()) {
@@ -31,40 +33,63 @@ export class PlayerComponent implements OnInit, OnDestroy {
 
     const streamId = this.route.snapshot.paramMap.get('streamId');
     const streamType = this.route.snapshot.paramMap.get('streamType');
+    const containerExtension = this.route.snapshot.paramMap.get('containerExtension');
 
     if (streamId && streamType) {
-      this.initPlayer(streamId, streamType);
+      this.initPlayer(streamId, streamType, containerExtension);
     } else {
       this.error = 'Invalid stream parameters';
     }
   }
 
-  initPlayer(streamId: string, streamType: string) {
+  initPlayer(streamId: string, streamType: string, containerExtension: string | null) {
     const creds = this.xtreamService.getCredentials();
     if (!creds) return;
 
+    this.streamType = streamType;
+    let extension = 'm3u8';
+    if (containerExtension) {
+      extension = containerExtension;
+    }
+
     // Construct stream URL
-    const type = 'live';
-    this.streamUrl = `${this.formatUrl(creds.url)}/${type}/${creds.username}/${creds.password}/${streamId}.m3u8`;
+    // Standard Xtream Codes structure:
+    // Live: /live/username/password/streamId.m3u8
+    // VOD: /movie/username/password/streamId.extension
+    // Series Episode: /series/username/password/episodeId.extension
+
+    // However, sometimes 'series' type in route might need to map to 'series' in URL, 
+    // or 'movie' if the server treats episodes as movies. 
+    // Usually usage is:
+    // Live -> 'live'
+    // Movie -> 'movie'
+    // Series Episode -> 'series' (or check if provider uses 'movie')
+    // For now assume 'series' maps to 'series' path.
+
+    this.streamUrl = `${this.formatUrl(creds.url)}/${streamType}/${creds.username}/${creds.password}/${streamId}.${extension}`;
 
     console.log('Stream URL:', this.streamUrl);
 
     // Initialize Video.js
+    const mimeType = this.getMimeType(extension);
+
     this.player = videojs(this.videoElement.nativeElement, {
       controls: true,
       autoplay: true,
-      preload: 'auto',
+      preload: 'metadata', // metadata is better for VOD to avoid full download
       fluid: true,
       sources: [{
         src: this.streamUrl,
-        type: 'application/x-mpegURL'
+        type: mimeType
       }],
       html5: {
         vhs: {
-          overrideNative: true, // Use VHS even if native HLS is supported (for better control/consistency)
+          overrideNative: true,
           limitRenditionByPlayerDimensions: true,
           useDevicePixelRatio: true
-        }
+        },
+        nativeAudioTracks: false,
+        nativeVideoTracks: false
       }
     });
 
@@ -79,6 +104,31 @@ export class PlayerComponent implements OnInit, OnDestroy {
         this.error = `Playback Error: ${error?.message}`;
       }
     });
+  }
+
+  private getMimeType(extension: string): string {
+    switch (extension.toLowerCase()) {
+      case 'm3u8': return 'application/x-mpegURL';
+      case 'ts': return 'video/mp2t';
+      // For other containers, default to 'video/mp4' to trick the browser into trying to play it.
+      // Browsers often support the codec (H264/AAC) inside MKV/AVI but reject the 'video/x-matroska' mime type.
+      case 'mp4':
+      case 'mkv':
+      case 'avi':
+      case 'mov':
+      case 'webm':
+      default: return 'video/mp4';
+    }
+  }
+
+  copyStreamUrl() {
+    if (this.streamUrl) {
+      navigator.clipboard.writeText(this.streamUrl).then(() => {
+        alert('Stream URL copied to clipboard!');
+      }).catch(err => {
+        console.error('Could not copy text: ', err);
+      });
+    }
   }
 
   private handleFatalError(error: any) {
@@ -125,6 +175,6 @@ export class PlayerComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
-    this.router.navigate(['/dashboard']);
+    this.location.back();
   }
 }
