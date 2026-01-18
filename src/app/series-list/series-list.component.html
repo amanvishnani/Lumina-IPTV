@@ -14,14 +14,22 @@
                 </option>
             </select>
         </div>
+
+        <div class="filter-group search-group" *ngIf="selectedCategoryId">
+            <label for="search">Search:</label>
+            <input type="text" id="search" [(ngModel)]="searchTerm" (ngModelChange)="onSearch()"
+                placeholder="Search series...">
+        </div>
+
         <div class="stats" *ngIf="filteredSeries.length">
-            Showing {{ filteredSeries.length }} series
+            Showing {{ (currentPage - 1) * pageSize + 1 }}-{{ Math.min(currentPage * pageSize, filteredSeries.length) }}
+            of {{ filteredSeries.length }} series
         </div>
     </div>
 
     <div class="content" *ngIf="!loading; else loader">
         <div class="grid-container">
-            <div *ngFor="let s of filteredSeries" (click)="openSeries(s)" class="series-card">
+            <div *ngFor="let s of paginatedSeries" (click)="openSeries(s)" class="series-card">
                 <div class="poster-wrapper">
                     <img [src]="s.cover" alt="{{ s.name }}" onerror="this.src='assets/no-poster.jpeg'" loading="lazy">
                     <div class="rating" *ngIf="s.rating">★ {{ s.rating }}</div>
@@ -31,11 +39,17 @@
                 </div>
             </div>
             <div *ngIf="filteredSeries.length === 0 && selectedCategoryId" class="no-data">
-                No series found in this category.
+                No series found matching your search or category.
             </div>
             <div *ngIf="!selectedCategoryId" class="no-data">
                 Please select a category to view series.
             </div>
+        </div>
+
+        <div class="pagination" *ngIf="filteredSeries.length > pageSize">
+            <button [disabled]="currentPage === 1" (click)="prevPage()" class="page-btn">Previous</button>
+            <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+            <button [disabled]="currentPage === totalPages" (click)="nextPage()" class="page-btn">Next</button>
         </div>
     </div>
 

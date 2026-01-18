@@ -14,14 +14,23 @@
                 </option>
             </select>
         </div>
+
+        <div class="filter-group search-group" *ngIf="selectedCategoryId">
+            <label for="search">Search:</label>
+            <input type="text" id="search" [(ngModel)]="searchTerm" (ngModelChange)="onSearch()"
+                placeholder="Search movies...">
+        </div>
+
         <div class="stats" *ngIf="filteredStreams.length">
-            Showing {{ filteredStreams.length }} movies
+            Showing {{ (currentPage - 1) * pageSize + 1 }}-{{ Math.min(currentPage * pageSize, filteredStreams.length)
+            }}
+            of {{ filteredStreams.length }} movies
         </div>
     </div>
 
     <div class="content" *ngIf="!loading; else loader">
         <div class="grid-container">
-            <div *ngFor="let stream of filteredStreams" (click)="playStream(stream)" class="movie-card">
+            <div *ngFor="let stream of paginatedStreams" (click)="playStream(stream)" class="movie-card">
                 <div class="poster-wrapper">
                     <img [src]="stream.stream_icon" alt="{{ stream.name }}" onerror="this.src='assets/no-poster.jpeg'"
                         loading="lazy">
@@ -32,11 +41,17 @@
                 </div>
             </div>
             <div *ngIf="filteredStreams.length === 0 && selectedCategoryId" class="no-data">
-                No movies found in this category.
+                No movies found matching your search or category.
             </div>
             <div *ngIf="!selectedCategoryId" class="no-data">
                 Please select a category to view movies.
             </div>
+        </div>
+
+        <div class="pagination" *ngIf="filteredStreams.length > pageSize">
+            <button [disabled]="currentPage === 1" (click)="prevPage()" class="page-btn">Previous</button>
+            <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+            <button [disabled]="currentPage === totalPages" (click)="nextPage()" class="page-btn">Next</button>
         </div>
     </div>
 
