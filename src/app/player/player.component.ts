@@ -3,12 +3,13 @@ import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { XtreamService } from '../services/xtream.service';
 import { XtreamVodInfo } from '../types';
+import { VodDetailsComponent } from '../vod-details/vod-details.component';
 import videojs from 'video.js';
 
 @Component({
   selector: 'app-player',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, VodDetailsComponent],
   templateUrl: './player.component.html',
   styleUrl: './player.component.css',
   encapsulation: ViewEncapsulation.None // Needed for video.js styles
@@ -120,6 +121,25 @@ export class PlayerComponent implements OnInit, OnDestroy {
         console.error('Error fetching movie info:', err);
       }
     });
+  }
+
+  handlePlay() {
+    if (this.player) {
+      this.player.play();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  handleDownload() {
+    if (this.streamUrl) {
+      const link = document.createElement('a');
+      link.href = this.streamUrl;
+      link.download = this.movieInfo?.info.name || 'movie';
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   }
 
   private getMimeType(extension: string): string {

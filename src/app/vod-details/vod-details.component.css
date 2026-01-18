@@ -1,0 +1,135 @@
+.metadata-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.movie-header {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.movie-poster {
+    width: 200px;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.movie-title-group h1 {
+    margin: 0 0 1rem 0;
+    font-size: 2.5rem;
+    color: #fff;
+}
+
+.meta-row {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #aaa;
+    font-size: 1.1rem;
+}
+
+.rating {
+    color: #f5c518;
+    font-weight: bold;
+}
+
+.genre-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.genre-tag {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.action-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.action-btn:active {
+    transform: scale(0.95);
+}
+
+.play-btn {
+    background-color: #e50914;
+    color: white;
+}
+
+.play-btn:hover {
+    background-color: #f6121d;
+}
+
+.download-btn {
+    background-color: #333;
+    color: white;
+    border: 1px solid #444;
+}
+
+.download-btn:hover {
+    background-color: #444;
+}
+
+.movie-details h3 {
+    color: #888;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+}
+
+.plot-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    color: #ccc;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .movie-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .movie-title-group h1 {
+        font-size: 2rem;
+    }
+
+    .meta-row {
+        justify-content: center;
+    }
+
+    .genre-tags {
+        justify-content: center;
+    }
+
+    .actions {
+        justify-content: center;
+    }
+}

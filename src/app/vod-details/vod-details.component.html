@@ -1,0 +1,38 @@
+<div class="metadata-content">
+    <div class="movie-header">
+        <img [src]="movieInfo.info.movie_image" alt="" class="movie-poster" onerror="this.src='assets/no-poster.png'">
+        <div class="movie-title-group">
+            <h1>{{ movieInfo.info.name }}</h1>
+            <div class="meta-row">
+                <span class="rating" *ngIf="movieInfo.info.rating">★ {{ movieInfo.info.rating }}</span>
+                <span class="duration" *ngIf="movieInfo.info.duration">{{ movieInfo.info.duration }}</span>
+                <span class="release-date" *ngIf="movieInfo.info.releaseDate">{{ movieInfo.info.releaseDate }}</span>
+            </div>
+            <div class="genre-tags">
+                <span *ngFor="let genre of movieInfo.info.genre.split(',')" class="genre-tag">{{ genre.trim() }}</span>
+            </div>
+            <div class="actions">
+                <button (click)="play()" class="action-btn play-btn">▶ Play</button>
+                <button (click)="download()" class="action-btn download-btn">↓ Download</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="movie-details">
+        <div class="detail-item" *ngIf="movieInfo.info.plot">
+            <h3>Plot</h3>
+            <p class="plot-text">{{ movieInfo.info.plot }}</p>
+        </div>
+
+        <div class="detail-grid">
+            <div class="detail-item" *ngIf="movieInfo.info.director">
+                <h3>Director</h3>
+                <p>{{ movieInfo.info.director }}</p>
+            </div>
+            <div class="detail-item" *ngIf="movieInfo.info.cast">
+                <h3>Cast</h3>
+                <p>{{ movieInfo.info.cast }}</p>
+            </div>
+        </div>
+    </div>
+</div>
