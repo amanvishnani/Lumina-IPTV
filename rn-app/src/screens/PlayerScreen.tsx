@@ -30,12 +30,13 @@ const PlayerScreen = ({ route, navigation }: any) => {
 
         let url = '';
         if (streamType === 'live') {
-            url = `${creds.url}/${creds.username}/${creds.password}/${streamId}.ts`;
+            url = `${creds.url}/${creds.username}/${creds.password}/${streamId}.m3u8`;
         } else if (streamType === 'movie') {
             url = `${creds.url}/movie/${creds.username}/${creds.password}/${streamId}.${extension || 'mp4'}`;
         } else if (streamType === 'series') {
             url = `${creds.url}/series/${creds.username}/${creds.password}/${streamId}.${extension || 'mp4'}`;
         }
+        console.log('Stream URL:', url);
         setStreamUrl(url);
     };
 
