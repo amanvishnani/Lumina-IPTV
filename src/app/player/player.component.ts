@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild, OnDestroy, inject, ViewEncaps
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { XtreamService } from '../services/xtream.service';
+import { XtreamVodInfo } from '../types';
 import videojs from 'video.js';
 
 @Component({
@@ -24,6 +25,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
   error = '';
   streamUrl = '';
   streamType = 'live'; // default
+  movieInfo: XtreamVodInfo | null = null;
 
   ngOnInit() {
     if (!this.xtreamService.isLoggedIn()) {
@@ -36,6 +38,9 @@ export class PlayerComponent implements OnInit, OnDestroy {
     const containerExtension = this.route.snapshot.paramMap.get('containerExtension');
 
     if (streamId && streamType) {
+      if (streamType === 'movie') {
+        this.fetchMovieInfo(Number(streamId));
+      }
       this.initPlayer(streamId, streamType, containerExtension);
     } else {
       this.error = 'Invalid stream parameters';
@@ -102,6 +107,17 @@ export class PlayerComponent implements OnInit, OnDestroy {
         this.handleFatalError(error);
       } else {
         this.error = `Playback Error: ${error?.message}`;
+      }
+    });
+  }
+
+  fetchMovieInfo(streamId: number) {
+    this.xtreamService.getVodInfo(streamId).subscribe({
+      next: (info) => {
+        this.movieInfo = info;
+      },
+      error: (err) => {
+        console.error('Error fetching movie info:', err);
       }
     });
   }

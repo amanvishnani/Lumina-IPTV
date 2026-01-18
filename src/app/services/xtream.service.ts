@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { XtreamCategory, XtreamCredentials, XtreamLoginResponse, XtreamStream, XtreamVodStream, XtreamSeries, XtreamSeriesInfo } from '../types';
+import { XtreamCategory, XtreamCredentials, XtreamLoginResponse, XtreamStream, XtreamVodStream, XtreamSeries, XtreamSeriesInfo, XtreamVodInfo } from '../types';
 
 @Injectable({
     providedIn: 'root'
@@ -62,6 +62,14 @@ export class XtreamService {
             apiUrl += `&category_id=${categoryId}`;
         }
         return this.http.get<XtreamVodStream[]>(apiUrl);
+    }
+
+    getVodInfo(streamId: number): Observable<XtreamVodInfo> {
+        const creds = this.getCredentials();
+        if (!creds) throw new Error('No credentials found');
+        const { url, username, password } = creds;
+        const apiUrl = `${this.formatUrl(url)}/player_api.php?username=${username}&password=${password}&action=get_vod_info&vod_id=${streamId}`;
+        return this.http.get<XtreamVodInfo>(apiUrl);
     }
 
     getSeriesCategories(): Observable<XtreamCategory[]> {

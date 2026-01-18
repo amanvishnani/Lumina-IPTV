@@ -60,6 +60,37 @@ export interface XtreamVodStream {
   direct_source: string;
 }
 
+export interface XtreamVodInfo {
+  info: {
+    name: string;
+    o_name?: string;
+    movie_image: string;
+    cover_big: string;
+    movie_description: string;
+    plot: string;
+    cast: string;
+    director: string;
+    genre: string;
+    releaseDate: string;
+    rating: string;
+    rating_5based: number;
+    backdrop_path: string[];
+    youtube_trailer: string;
+    duration_secs: number;
+    duration: string;
+    bitrate: number;
+  };
+  movie_data: {
+    stream_id: number;
+    name: string;
+    added: string;
+    category_id: string;
+    container_extension: string;
+    custom_sid: string;
+    direct_source: string;
+  };
+}
+
 export interface XtreamSeries {
   num: number;
   name: string;
