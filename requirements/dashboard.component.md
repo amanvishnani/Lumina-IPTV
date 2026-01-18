@@ -14,5 +14,12 @@ The `DashboardComponent` is the central hub for Live TV. It lets users browse th
 - **Lifecycle Hooks**: Uses `ngOnInit` to verify login status and trigger initial data fetching.
 - **Search Logic**: Uses an RxJS `Subject` with `debounceTime(1000)` to prevent excessive filtering while typing.
 - **Filtering & Pagination**: Implements client-side logic to filter the `streams` array and return a small slice (`paginatedStreams`) for the current page.
-- **Template Directives**: Uses `*ngFor` for listing and `*ngIf` for conditional loaders and error states.
-- **Routing**: Handles navigation to `/play`, `/movies`, and `/series`.
+
+## React Native Implementation
+- **Layout**: Uses `SafeAreaView` and `View` with `flexDirection: 'row'` for the header and navigation controls.
+- **Listing**: Implements `FlatList` for efficient vertical scrolling of channels.
+- **Category Filter**: Uses a horizontal scrolling `FlatList` to display categories as interactive chips.
+- **Search**: Implements a `TextInput` that filters the local state on every change.
+- **Infinite Scroll / Pagination**: Uses `FlatList`'s `onEndReached` to dynamically load more items (by increasing the visible slice) as the user scrolls down.
+- **Images**: Uses the `Image` component with `source={{ uri: ... }}` and a fallback placeholder for channel icons.
+- **Interaction**: Uses `TouchableOpacity` for channel selection and navigation to the player.

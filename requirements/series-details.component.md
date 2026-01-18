@@ -9,7 +9,13 @@ The `SeriesDetailsComponent` allows users to dive deep into a TV show to see its
 - **Playback**: Selecting an episode starts the video player for that specific content.
 
 ## Angular Implementation
-- **Nested Data**: Handles the `XtreamSeriesInfo` structure which contains a dictionary of episodes grouped by season number.
-- **State Management**: Tracks `selectedSeason` and updates the displayed `episodes` array automatically.
-- **Route Parameters**: Retrieves the series ID from the route to fetch the correct data.
-- **Navigation**: Links directly to the player with the specific episode ID and file type.
+- **Hierarchical Data**: Handles the nested structure of seasons and episodes returned by the series API.
+- **Dynamic Content**: Updates the displayed episode list whenever the user switches between seasons.
+- **Service Dependency**: Injects `XtreamService` to fetch show info and handle playback navigation.
+
+## React Native Implementation
+- **Season Management**: Uses `useState` to track the current `selectedSeason` and filters the `episodes` dictionary accordingly.
+- **Horizontal Navigation**: Implements a horizontal `ScrollView` for the season badge selector to save vertical space.
+- **Episode Listing**: Renders a vertical list of episodes as interactive cards with clear playback indicators.
+- **Visual Presentation**: Features a hero-style backdrop, show metadata, and a persistent "Back" FAB for easy navigation.
+- **Deep Linking**: Passes season and episode context when navigating to the full-screen player.

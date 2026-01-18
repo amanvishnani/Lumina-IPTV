@@ -12,5 +12,12 @@ The `LoginComponent` is the first screen users see. it allows them to enter thei
 - **Reactive Forms**: Uses `FormBuilder` and `ReactiveFormsModule` for form management and validation.
 - **Validation**: Enforces `Validators.required` on all input fields.
 - **HTTP Interaction**: Injects `XtreamService` to perform the login request.
-- **Routing**: Uses `Router` to navigate to `['/dashboard']` on successful authentication (`auth === 1`).
-- **State Handling**: Manages local `loading` and `error` flags to update the UI during the login process.
+- **Routing**: Uses `Router` to navigate to `['/dashboard']` on successful authentication.
+
+## React Native Implementation
+- **State Management**: Uses `useState` hooks for tracking input fields and loading/error states.
+- **Input Handling**: Uses `TextInput` with `onChangeText` and `secureTextEntry` for passwords.
+- **UI & Layout**: Implements `KeyboardAvoidingView` and `ScrollView` to ensure inputs are accessible when the keyboard is open.
+- **Interaction**: Uses `TouchableOpacity` for the login button and `ActivityIndicator` for the loading state.
+- **Alerts**: Uses `Alert.alert()` for displaying validation and connection errors.
+- **Async Logic**: Uses `async/await` to call the singleton `xtreamService.login()`.

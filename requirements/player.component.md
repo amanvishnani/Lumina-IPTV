@@ -13,3 +13,10 @@ The `PlayerComponent` is the actual video screen. It is designed to be very simp
 - **URL Building**: Injects `XtreamService` to get user credentials and construct the final stream URL based on `streamType`.
 - **Lifecycle Management**: Ensures the player is properly destroyed on `ngOnDestroy` to prevent memory leaks.
 - **Error Handling**: Captures playback errors and displays a fallback UI with the direct stream link.
+
+## React Native Implementation
+- **Native Video component**: Uses `react-native-video` to leverage native hardware acceleration for HLS and TS stream playback.
+- **Full-Screen Playback**: Employs absolute positioning (`top: 0, left: 0, right: 0, bottom: 0`) to achieve a true full-screen experience.
+- **Orientation Control**: Implements `StatusBar.setHidden(true)` to maximize screen real estate during playback (with manual landscape handling recommended).
+- **Stream URL resolution**: Dynamically constructs the direct streaming URL (Live: `.ts`, VOD/Series: `.mp4`) based on the `streamType` and user credentials.
+- **Native Controls**: Enables the `controls={true}` prop to provide standard native playback overlays (scrubbing, volume, etc.).

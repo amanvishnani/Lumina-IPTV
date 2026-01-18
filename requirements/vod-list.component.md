@@ -13,5 +13,10 @@ The `VodListComponent` is where users can find and browse through the entire mov
 - **Search Debounce**: Implements a 1-second debounce using RxJS `Subject` and `debounceTime`.
 - **Client-Side Slicing**: Calculates `paginatedStreams` based on `currentPage` and `pageSize` (20 items).
 - **Service Integration**: Injects `XtreamService` to fetch VOD categories and streams.
-- **Template Logic**: Uses `FormsModule` for `[(ngModel)]` binding on search and category picks.
-- **Responsive Styling**: Uses CSS Grid for the layout, adapting from desktop to mobile views.
+
+## React Native Implementation
+- **Layout Strategy**: Uses `FlatList` with `numColumns={3}` to create a responsive grid of movie posters.
+- **Dynamic Sizing**: Calculates item width based on the device's screen width using the `Dimensions` API for a consistent 3-column look.
+- **Loading Pattern**: Uses conditional rendering to show a `centerLoader` during the initial fetch and infinite scroll (via `onEndReached`) for large libraries.
+- **Image Optimization**: Utilizes the `Image` component with `resizeMode="cover"` and fixed aspect ratios (1.5 for posters) to preserve the visual grid.
+- **Navigation Flow**: Passes the `streamId` as a route parameter when navigating to the `VodDetails` screen.

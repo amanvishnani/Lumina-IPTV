@@ -9,8 +9,13 @@ The `SeriesListComponent` lets users explore the TV show library, finding their 
 - **Pagination**: Manages large series libraries by splitting them into pages.
 
 ## Angular Implementation
-- **Shared Logic**: Follows the same pattern as `VodListComponent` with a 1-second search debounce.
-- **Data Handling**: Fetches series categories and items via `XtreamService`.
-- **Filtering**: Performs client-side filtering on the `series` array.
-- **Pagination**: Uses `paginatedSeries` and `totalPages` getters to manage the view state.
-- **Navigation**: Uses `router.navigate` to move to `/series/:id`.
+- **Data Lifecycle**: Synchronizes series categories and lists using RxJS pipelines.
+- **Client-Side Search**: Implements a debounced search logic similar to the VOD component to ensure smooth performance with large lists.
+- **Table View**: Uses a standard HTML table or grid to display show titles and categories.
+
+## React Native Implementation
+- **Grid Layout**: Utilizes `FlatList` with `numColumns={3}` for a visually rich poster grid, consistent with the `Movies` view.
+- **Visual Sizing**: Uses `Dimensions` to calculate exact item widths, ensuring the grid fills the screen on all device sizes.
+- **Poster Rendering**: Displays show covers using the `Image` component with fixed aspect ratios to maintain grid alignment.
+- **Interactive Browsing**: Implements horizontal category tabs and a search input for quick discovery.
+- **Navigation Flow**: Seamlessly transitions to the detailed `SeriesDetails` view upon selecting a show.

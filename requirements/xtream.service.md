@@ -10,7 +10,12 @@ The `XtreamService` acts as the bridge between the application and the IPTV prov
 
 ## Angular Implementation
 - **Dependency Injection**: Registered as a root provider using `@Injectable({ providedIn: 'root' })`.
-- **HTTP Client**: Uses Angular's `HttpClient` to make RESTful API calls to `player_api.php`.
+- **HTTP Client**: Uses Angular's `HttpClient` to make RESTful API calls.
 - **Reactive Programming**: Returns `Observable` streams for all data fetching operations.
 - **State Management**: Uses `localStorage` to persist `XtreamCredentials`.
-- **Utility Methods**: Includes `formatUrl` and `getCredentials` for internal consistency and authentication state.
+
+## React Native Implementation
+- **Singleton Pattern**: Implemented as a static `getInstance()` class.
+- **HTTP Client**: Uses `axios` for standard Promise-based API requests.
+- **Asynchronous Logic**: Uses `async/await` for all operations.
+- **State Management**: Uses `@react-native-async-storage/async-storage` for persistent credential storage.
