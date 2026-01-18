@@ -1,19 +1,18 @@
-.player-page {
+.player-container {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    background-color: #0b0b0b;
-    color: #e0e0e0;
-    overflow: hidden;
+    background-color: #000;
+    color: white;
 }
 
 .player-header {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    padding: 1rem 2rem;
-    background: rgba(0, 0, 0, 0.8);
-    border-bottom: 1px solid #333;
+    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
     z-index: 10;
 }
 
@@ -27,38 +26,17 @@
 }
 
 .back-btn {
-    background: #333;
+    background: rgba(255, 255, 255, 0.2);
     color: white;
     border: none;
     padding: 0.5rem 1rem;
     border-radius: 4px;
     cursor: pointer;
-    white-space: nowrap;
+    font-size: 1rem;
 }
 
 .back-btn:hover {
-    background: #444;
-}
-
-.player-content {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-}
-
-.video-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background: #000;
-    position: relative;
-}
-
-/* Split layout specific */
-.movie-layout .video-section {
-    flex: 0 0 50%;
-    /* 50% width for video in movie layout */
-    border-right: 1px solid #333;
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .video-container {
@@ -68,8 +46,10 @@
 }
 
 .video-wrapper {
-    width: 100%;
-    height: 100%;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .video-js {
@@ -77,37 +57,37 @@
     height: 100%;
 }
 
-.metadata-section {
-    flex: 1;
-    background: #121212;
-    overflow-y: auto;
-    padding: 2rem;
-    scrollbar-width: thin;
-    scrollbar-color: #333 transparent;
-}
-
 .error-message {
-    padding: 2rem;
-    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     color: #ff4444;
+    font-size: 1.2rem;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 2rem;
+    border-radius: 4px;
+    text-align: center;
+    z-index: 20;
 }
 
-/* Responsive adjustments */
-@media (max-width: 1024px) {
-    .movie-layout .player-content {
-        flex-direction: column;
-        overflow-y: auto;
-    }
+.suggestion {
+    color: #ccc;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    line-height: 1.5;
+}
 
-    .movie-layout .video-section {
-        flex: 0 0 auto;
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid #333;
-    }
+.copy-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 0.5rem;
+}
 
-    .metadata-section {
-        flex: 0 0 auto;
-        overflow-y: visible;
-    }
+.copy-btn:hover {
+    background: #0056b3;
 }

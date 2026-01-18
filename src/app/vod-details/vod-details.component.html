@@ -1,38 +1,60 @@
-<div class="metadata-content">
-    <div class="movie-header">
-        <img [src]="movieInfo.info.movie_image" alt="" class="movie-poster" onerror="this.src='assets/no-poster.png'">
-        <div class="movie-title-group">
-            <h1>{{ movieInfo.info.name }}</h1>
-            <div class="meta-row">
-                <span class="rating" *ngIf="movieInfo.info.rating">★ {{ movieInfo.info.rating }}</span>
-                <span class="duration" *ngIf="movieInfo.info.duration">{{ movieInfo.info.duration }}</span>
-                <span class="release-date" *ngIf="movieInfo.info.releaseDate">{{ movieInfo.info.releaseDate }}</span>
+<div class="vod-details-page">
+    <header class="player-header">
+        <button (click)="goBack()" class="back-btn">← Back</button>
+        <h2 *ngIf="movieInfo" class="header-title">{{ movieInfo.info.name }}</h2>
+    </header>
+
+    <div class="page-content" *ngIf="movieInfo; else loaderOrError">
+        <div class="metadata-content">
+            <div class="movie-header">
+                <img [src]="movieInfo.info.movie_image" alt="" class="movie-poster"
+                    onerror="this.src='assets/no-poster.png'">
+                <div class="movie-title-group">
+                    <h1>{{ movieInfo.info.name }}</h1>
+                    <div class="meta-row">
+                        <span class="rating" *ngIf="movieInfo.info.rating">★ {{ movieInfo.info.rating }}</span>
+                        <span class="duration" *ngIf="movieInfo.info.duration">{{ movieInfo.info.duration }}</span>
+                        <span class="release-date" *ngIf="movieInfo.info.releaseDate">{{ movieInfo.info.releaseDate
+                            }}</span>
+                    </div>
+                    <div class="genre-tags">
+                        <span *ngFor="let genre of movieInfo.info.genre.split(',')" class="genre-tag">{{ genre.trim()
+                            }}</span>
+                    </div>
+                    <div class="actions">
+                        <button (click)="play()" class="action-btn play-btn">▶ Play</button>
+                        <button (click)="download()" class="action-btn download-btn">↓ Download</button>
+                    </div>
+                </div>
             </div>
-            <div class="genre-tags">
-                <span *ngFor="let genre of movieInfo.info.genre.split(',')" class="genre-tag">{{ genre.trim() }}</span>
-            </div>
-            <div class="actions">
-                <button (click)="play()" class="action-btn play-btn">▶ Play</button>
-                <button (click)="download()" class="action-btn download-btn">↓ Download</button>
+
+            <div class="movie-details">
+                <div class="detail-item" *ngIf="movieInfo.info.plot">
+                    <h3>Plot</h3>
+                    <p class="plot-text">{{ movieInfo.info.plot }}</p>
+                </div>
+
+                <div class="detail-grid">
+                    <div class="detail-item" *ngIf="movieInfo.info.director">
+                        <h3>Director</h3>
+                        <p>{{ movieInfo.info.director }}</p>
+                    </div>
+                    <div class="detail-item" *ngIf="movieInfo.info.cast">
+                        <h3>Cast</h3>
+                        <p>{{ movieInfo.info.cast }}</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="movie-details">
-        <div class="detail-item" *ngIf="movieInfo.info.plot">
-            <h3>Plot</h3>
-            <p class="plot-text">{{ movieInfo.info.plot }}</p>
-        </div>
-
-        <div class="detail-grid">
-            <div class="detail-item" *ngIf="movieInfo.info.director">
-                <h3>Director</h3>
-                <p>{{ movieInfo.info.director }}</p>
-            </div>
-            <div class="detail-item" *ngIf="movieInfo.info.cast">
-                <h3>Cast</h3>
-                <p>{{ movieInfo.info.cast }}</p>
+    <ng-template #loaderOrError>
+        <div class="status-container">
+            <div class="loader" *ngIf="loading">Loading movie details...</div>
+            <div class="error" *ngIf="error">
+                <p>{{ error }}</p>
+                <button (click)="goBack()" class="back-btn">Go Back</button>
             </div>
         </div>
-    </div>
+    </ng-template>
 </div>

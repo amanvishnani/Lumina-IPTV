@@ -11,5 +11,6 @@ export const routes: Routes = [
     { path: 'series/:id', loadComponent: () => import('./series-details/series-details.component').then(m => m.SeriesDetailsComponent) },
     { path: 'play/:streamId/:streamType', loadComponent: () => import('./player/player.component').then(m => m.PlayerComponent) },
     { path: 'play/:streamId/:streamType/:containerExtension', loadComponent: () => import('./player/player.component').then(m => m.PlayerComponent) },
+    { path: 'movie/:id', loadComponent: () => import('./vod-details/vod-details.component').then(m => m.VodDetailsComponent) },
     { path: '**', redirectTo: 'login' }
 ];

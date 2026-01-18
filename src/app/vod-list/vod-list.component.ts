@@ -74,8 +74,7 @@ export class VodListComponent implements OnInit {
     }
 
     playStream(stream: XtreamVodStream) {
-        // For VOD, type is usually 'movie'
-        this.router.navigate(['/play', stream.stream_id, 'movie', stream.container_extension]);
+        this.router.navigate(['/movie', stream.stream_id]);
     }
 
     backToDashboard() {
