@@ -144,16 +144,6 @@ export class PlayerComponent implements OnInit, OnDestroy {
     // Simplest robust way: reload route or component.
 
     this.error = "Stream error, reloading...";
-
-    setTimeout(() => {
-      // Force component reload
-      // A simple way is to navigate to self or re-run init logic if element persists (it won't with dispose)
-      // Let's try navigating to dashboard and back or just reloading page
-      // For smoother UX, let's just use window.location.reload() or re-route
-      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-        this.router.navigate(['/play', this.route.snapshot.paramMap.get('streamId'), this.route.snapshot.paramMap.get('streamType')]);
-      });
-    }, 2000);
   }
 
   private formatUrl(url: string): string {

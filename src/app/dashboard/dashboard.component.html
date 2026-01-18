@@ -18,8 +18,14 @@
                 </option>
             </select>
         </div>
+        <div class="filter-group">
+            <label for="search">Search:</label>
+            <input type="text" id="search" placeholder="Search channels..." (input)="onSearch($event)"
+                class="search-input">
+        </div>
         <div class="stats">
-            Showing {{ filteredStreams.length }} streams
+            Showing {{ (currentPage - 1) * pageSize + 1 }}-{{ (currentPage * pageSize) > filteredStreams.length ?
+            filteredStreams.length : (currentPage * pageSize) }} of {{ filteredStreams.length }} streams
         </div>
     </div>
 
@@ -37,7 +43,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let stream of filteredStreams" (click)="playStream(stream)" class="clickable-row">
+                    <tr *ngFor="let stream of paginatedStreams" (click)="playStream(stream)" class="clickable-row">
                         <td>
                             <img [src]="stream.stream_icon" alt="" class="channel-icon"
                                 onerror="this.style.display='none'" *ngIf="stream.stream_icon">
@@ -53,6 +59,12 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <div class="pagination" *ngIf="totalPages > 1">
+            <button (click)="prevPage()" [disabled]="currentPage === 1" class="page-btn">Previous</button>
+            <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+            <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="page-btn">Next</button>
         </div>
     </div>
 

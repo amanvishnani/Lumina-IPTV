@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { XtreamService } from '../services/xtream.service';
 import { XtreamCategory, XtreamStream } from '../types';
 import { FormsModule } from '@angular/forms';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,6 +23,14 @@ export class DashboardComponent implements OnInit {
   loading = false;
   selectedCategoryId: string = '';
 
+  // Search
+  searchTerm: string = '';
+  private searchSubject = new Subject<string>();
+
+  // Pagination
+  currentPage: number = 1;
+  pageSize: number = 20;
+
   ngOnInit() {
     if (!this.xtreamService.isLoggedIn()) {
       this.router.navigate(['/login']);
@@ -29,6 +38,15 @@ export class DashboardComponent implements OnInit {
     }
 
     this.fetchData();
+
+    // Setup search debounce
+    this.searchSubject.pipe(
+      debounceTime(1000),
+      distinctUntilChanged()
+    ).subscribe(term => {
+      this.searchTerm = term;
+      this.applyFilter();
+    });
   }
 
   fetchData() {
@@ -63,7 +81,51 @@ export class DashboardComponent implements OnInit {
 
 
   onCategoryChange() {
+    this.currentPage = 1;
     this.fetchStreams();
+  }
+
+  onSearch(event: Event) {
+    const term = (event.target as HTMLInputElement).value;
+    this.searchSubject.next(term);
+  }
+
+  applyFilter() {
+    if (!this.searchTerm) {
+      this.filteredStreams = this.streams;
+    } else {
+      const term = this.searchTerm.toLowerCase();
+      this.filteredStreams = this.streams.filter(s =>
+        s.name.toLowerCase().includes(term)
+      );
+    }
+    this.currentPage = 1;
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredStreams.length / this.pageSize);
+  }
+
+  get paginatedStreams(): XtreamStream[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    return this.filteredStreams.slice(start, end);
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+
+  goToPage(page: number) {
+    this.currentPage = page;
   }
 
   playStream(stream: XtreamStream) {
