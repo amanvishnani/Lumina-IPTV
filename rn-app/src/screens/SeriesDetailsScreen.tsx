@@ -28,7 +28,7 @@ const SeriesDetailsScreen = ({ route, navigation }: any) => {
         try {
             const info = await xtreamService.getSeriesInfo(seriesId);
             setSeriesInfo(info);
-            if (info.seasons?.length > 0) {
+            if (info?.seasons?.length > 0) {
                 setSelectedSeason(info.seasons[0].season_number || 1);
             }
         } catch (error) {
@@ -57,7 +57,9 @@ const SeriesDetailsScreen = ({ route, navigation }: any) => {
         );
     }
 
-    const { info, episodes, seasons } = seriesInfo;
+    const info = seriesInfo.info || {};
+    const episodes = seriesInfo.episodes || {};
+    const seasons = seriesInfo.seasons || [];
     const currentEpisodes = episodes[selectedSeason.toString()] || [];
 
     return (
@@ -72,9 +74,9 @@ const SeriesDetailsScreen = ({ route, navigation }: any) => {
                     <View style={styles.header}>
                         <Image source={{ uri: info.cover }} style={styles.poster} />
                         <View style={styles.headerInfo}>
-                            <Text style={styles.title}>{info.name}</Text>
+                            <Text style={styles.title}>{info.name || 'Unknown Series'}</Text>
                             <Text style={styles.meta}>
-                                {info.releaseDate} • ⭐ {info.rating}
+                                {info.releaseDate} {info.releaseDate && '•'} ⭐ {info.rating}
                             </Text>
                             <Text style={styles.genre}>{info.genre}</Text>
                         </View>
@@ -82,54 +84,60 @@ const SeriesDetailsScreen = ({ route, navigation }: any) => {
 
                     <View style={styles.details}>
                         <Text style={styles.sectionTitle}>Storyline</Text>
-                        <Text style={styles.plot}>{info.plot}</Text>
+                        <Text style={styles.plot}>{info.plot || 'No storyline available.'}</Text>
                     </View>
 
-                    <View style={styles.seasonSelector}>
-                        <Text style={styles.sectionTitle}>Seasons</Text>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                            {seasons.map((s: any) => (
-                                <TouchableOpacity
-                                    key={s.season_number}
-                                    style={[
-                                        styles.seasonBadge,
-                                        selectedSeason === s.season_number && styles.seasonBadgeActive,
-                                    ]}
-                                    onPress={() => setSelectedSeason(s.season_number)}
-                                >
-                                    <Text style={[
-                                        styles.seasonBadgeText,
-                                        selectedSeason === s.season_number && styles.seasonBadgeTextActive,
-                                    ]}>
-                                        Season {s.season_number}
-                                    </Text>
-                                </TouchableOpacity>
-                            ))}
-                        </ScrollView>
-                    </View>
+                    {seasons.length > 0 && (
+                        <View style={styles.seasonSelector}>
+                            <Text style={styles.sectionTitle}>Seasons</Text>
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                {seasons.map((s: any) => (
+                                    <TouchableOpacity
+                                        key={s.season_number}
+                                        style={[
+                                            styles.seasonBadge,
+                                            selectedSeason === s.season_number && styles.seasonBadgeActive,
+                                        ]}
+                                        onPress={() => setSelectedSeason(s.season_number)}
+                                    >
+                                        <Text style={[
+                                            styles.seasonBadgeText,
+                                            selectedSeason === s.season_number && styles.seasonBadgeTextActive,
+                                        ]}>
+                                            Season {s.season_number}
+                                        </Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </ScrollView>
+                        </View>
+                    )}
 
                     <View style={styles.episodeList}>
                         <Text style={styles.sectionTitle}>Episodes</Text>
-                        {currentEpisodes.map((ep: XtreamEpisode) => (
-                            <TouchableOpacity
-                                key={ep.id}
-                                style={styles.episodeCard}
-                                onPress={() => navigation.navigate('Player', {
-                                    streamId: ep.id,
-                                    streamType: 'series',
-                                    extension: ep.container_extension
-                                })}
-                            >
-                                <View style={styles.epNumContainer}>
-                                    <Text style={styles.epNum}>{ep.episode_num}</Text>
-                                </View>
-                                <View style={styles.epInfo}>
-                                    <Text style={styles.epTitle} numberOfLines={1}>{ep.title}</Text>
-                                    <Text style={styles.epMeta}>Tap to play</Text>
-                                </View>
-                                <Text style={styles.playIcon}>▶</Text>
-                            </TouchableOpacity>
-                        ))}
+                        {currentEpisodes.length === 0 ? (
+                            <Text style={styles.epMeta}>No episodes found for this season.</Text>
+                        ) : (
+                            currentEpisodes.map((ep: XtreamEpisode) => (
+                                <TouchableOpacity
+                                    key={ep.id}
+                                    style={styles.episodeCard}
+                                    onPress={() => navigation.navigate('Player', {
+                                        streamId: ep.id,
+                                        streamType: 'series',
+                                        extension: ep.container_extension || 'mp4'
+                                    })}
+                                >
+                                    <View style={styles.epNumContainer}>
+                                        <Text style={styles.epNum}>{ep.episode_num}</Text>
+                                    </View>
+                                    <View style={styles.epInfo}>
+                                        <Text style={styles.epTitle} numberOfLines={1}>{ep.title}</Text>
+                                        <Text style={styles.epMeta}>Tap to play</Text>
+                                    </View>
+                                    <Text style={styles.playIcon}>▶</Text>
+                                </TouchableOpacity>
+                            ))
+                        )}
                     </View>
                 </View>
             </ScrollView>

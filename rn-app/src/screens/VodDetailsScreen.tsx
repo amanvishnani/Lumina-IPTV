@@ -9,6 +9,7 @@ import {
     ActivityIndicator,
     SafeAreaView,
     Linking,
+    Alert,
 } from 'react-native';
 import { xtreamService } from '../services/xtreamService';
 import { XtreamVodInfo } from '../types';
@@ -39,8 +40,14 @@ const VodDetailsScreen = ({ route, navigation }: any) => {
         const creds = await xtreamService.getCredentials();
         if (!creds) return;
 
-        const extension = movieInfo.movie_data.container_extension || 'mp4';
-        const streamUrl = `${creds.url}/movie/${creds.username}/${creds.password}/${movieInfo.movie_data.stream_id}.${extension}`;
+        const streamData = movieInfo.movie_data;
+        if (!streamData) {
+            Alert.alert('Error', 'Stream information not available.');
+            return;
+        }
+
+        const extension = streamData.container_extension || 'mp4';
+        const streamUrl = `${creds.url}/movie/${creds.username}/${creds.password}/${streamData.stream_id}.${extension}`;
 
         Linking.openURL(streamUrl);
     };
@@ -53,7 +60,7 @@ const VodDetailsScreen = ({ route, navigation }: any) => {
         );
     }
 
-    if (!movieInfo) {
+    if (!movieInfo || !movieInfo.info) {
         return (
             <View style={styles.center}>
                 <Text style={styles.errorText}>Failed to load movie details.</Text>
@@ -64,23 +71,36 @@ const VodDetailsScreen = ({ route, navigation }: any) => {
         );
     }
 
-    const movieData = movieInfo.info.movie_data;
+    const { info, movie_data } = movieInfo;
+
+    const getBackdropUrl = () => {
+        if (info.backdrop_path && info.backdrop_path.length > 0) {
+            return info.backdrop_path[0];
+        }
+        if (info.backdrop) {
+            const urls = info.backdrop.split(/\r?\n/).filter(url => url.trim().length > 0);
+            if (urls.length > 0) return urls[0].trim();
+        }
+        return info.movie_image;
+    };
+
+    const displayYear = info.releasedate ? info.releasedate.split('-')[0] : '';
 
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView>
                 <Image
-                    source={{ uri: movieData.backdrop_path?.[0] || movieData.stream_icon }}
+                    source={{ uri: getBackdropUrl() }}
                     style={styles.backdrop}
                 />
 
                 <View style={styles.content}>
                     <View style={styles.header}>
-                        <Image source={{ uri: movieData.stream_icon }} style={styles.poster} />
+                        <Image source={{ uri: info.movie_image }} style={styles.poster} />
                         <View style={styles.headerInfo}>
-                            <Text style={styles.title}>{movieData.name}</Text>
+                            <Text style={styles.title}>{movie_data.name}</Text>
                             <Text style={styles.meta}>
-                                {movieData.year} • {movieData.genre} • ⭐ {movieData.rating}
+                                {displayYear} {displayYear && '•'} {info.genre} {info.genre && '•'} ⭐ {info.rating}
                             </Text>
                         </View>
                     </View>
@@ -89,9 +109,9 @@ const VodDetailsScreen = ({ route, navigation }: any) => {
                         <TouchableOpacity
                             style={styles.playButton}
                             onPress={() => navigation.navigate('Player', {
-                                streamId: movieInfo.movie_data.stream_id,
+                                streamId: movie_data.stream_id,
                                 streamType: 'movie',
-                                extension: movieInfo.movie_data.container_extension
+                                extension: movie_data.container_extension || 'mp4'
                             })}
                         >
                             <Text style={styles.playButtonText}>Play</Text>
@@ -101,23 +121,39 @@ const VodDetailsScreen = ({ route, navigation }: any) => {
                         </TouchableOpacity>
                     </View>
 
+                    {info.youtube_trailer && (
+                        <TouchableOpacity
+                            style={styles.trailerButton}
+                            onPress={() => Linking.openURL(`https://www.youtube.com/watch?v=${info.youtube_trailer}`)}
+                        >
+                            <Text style={styles.trailerButtonText}>View Trailer</Text>
+                        </TouchableOpacity>
+                    )}
+
                     <View style={styles.details}>
                         <Text style={styles.sectionTitle}>Overview</Text>
-                        <Text style={styles.plot}>{movieData.plot || movieData.description}</Text>
+                        <Text style={styles.plot}>{info.plot || 'No description available.'}</Text>
+
+                        {info.releasedate && (
+                            <View style={styles.infoRow}>
+                                <Text style={styles.infoLabel}>Release</Text>
+                                <Text style={styles.infoValue}>{info.releasedate}</Text>
+                            </View>
+                        )}
 
                         <View style={styles.infoRow}>
                             <Text style={styles.infoLabel}>Director</Text>
-                            <Text style={styles.infoValue}>{movieData.director}</Text>
+                            <Text style={styles.infoValue}>{info.director || 'N/A'}</Text>
                         </View>
 
                         <View style={styles.infoRow}>
                             <Text style={styles.infoLabel}>Cast</Text>
-                            <Text style={styles.infoValue}>{movieData.cast || movieData.actors}</Text>
+                            <Text style={styles.infoValue}>{info.cast || 'N/A'}</Text>
                         </View>
 
                         <View style={styles.infoRow}>
                             <Text style={styles.infoLabel}>Runtime</Text>
-                            <Text style={styles.infoValue}>{movieData.duration}</Text>
+                            <Text style={styles.infoValue}>{info.duration || 'N/A'}</Text>
                         </View>
                     </View>
                 </View>
@@ -202,6 +238,18 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     downloadButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    trailerButton: {
+        backgroundColor: '#FF0000',
+        padding: 12,
+        borderRadius: 8,
+        alignItems: 'center',
+        marginTop: 15,
+    },
+    trailerButtonText: {
         color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',

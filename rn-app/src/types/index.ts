@@ -51,39 +51,146 @@ export interface XtreamStream {
 }
 
 export interface XtreamVodInfo {
-    info: {
-        movie_data: {
-            stream_id: number;
-            name: string;
-            title: string;
-            year: string;
-            rating: string;
-            rating_59: number;
-            director: string;
-            actors: string;
-            cast: string;
-            description: string;
-            plot: string;
-            age: string;
-            mpaa_rating: string;
-            rating_count_kinopoisk: number;
-            country: string;
-            genre: string;
-            backdrop_path: string[];
-            duration_secs: number;
-            duration: string;
-            video: any;
-            audio: any;
-            bitrate: number;
-            stream_icon: string;
-        };
-    };
-    movie_data: {
-        stream_id: number;
-        name: string;
-        title: string;
-        container_extension: string;
-    };
+    info: Info;
+    movie_data: MovieData;
+}
+export interface Info {
+    audio: Audio
+    backdrop: string
+    backdrop_path: any[]
+    bitrate: number
+    cast: string
+    director: string
+    duration: string
+    duration_secs: number
+    genre: string
+    movie_image: string
+    plot: string
+    rating: string
+    releasedate: string
+    tmdb_id: string
+    video: Video
+    youtube_trailer: string
+}
+
+export interface Audio {
+    avg_frame_rate: string
+    bits_per_sample: number
+    channel_layout: string
+    channels: number
+    codec_long_name: string
+    codec_name: string
+    codec_tag: string
+    codec_tag_string: string
+    codec_time_base: string
+    codec_type: string
+    disposition: Disposition
+    index: number
+    profile: string
+    r_frame_rate: string
+    sample_fmt: string
+    sample_rate: string
+    start_pts: number
+    start_time: string
+    tags: Tags
+    time_base: string
+}
+
+export interface Disposition {
+    attached_pic: number
+    clean_effects: number
+    comment: number
+    default: number
+    dub: number
+    forced: number
+    hearing_impaired: number
+    karaoke: number
+    lyrics: number
+    original: number
+    timed_thumbnails: number
+    visual_impaired: number
+}
+
+export interface Tags {
+    BPS: string
+    DURATION: string
+    NUMBER_OF_BYTES: string
+    NUMBER_OF_FRAMES: string
+    _STATISTICS_TAGS: string
+    _STATISTICS_WRITING_APP: string
+    _STATISTICS_WRITING_DATE_UTC: string
+}
+
+export interface Video {
+    avg_frame_rate: string
+    bits_per_raw_sample: string
+    chroma_location: string
+    codec_long_name: string
+    codec_name: string
+    codec_tag: string
+    codec_tag_string: string
+    codec_time_base: string
+    codec_type: string
+    coded_height: number
+    coded_width: number
+    color_primaries: string
+    color_range: string
+    color_space: string
+    color_transfer: string
+    display_aspect_ratio: string
+    disposition: Disposition2
+    field_order: string
+    has_b_frames: number
+    height: number
+    index: number
+    is_avc: string
+    level: number
+    nal_length_size: string
+    pix_fmt: string
+    profile: string
+    r_frame_rate: string
+    refs: number
+    sample_aspect_ratio: string
+    start_pts: number
+    start_time: string
+    tags: Tags2
+    time_base: string
+    width: number
+}
+
+export interface Disposition2 {
+    attached_pic: number
+    clean_effects: number
+    comment: number
+    default: number
+    dub: number
+    forced: number
+    hearing_impaired: number
+    karaoke: number
+    lyrics: number
+    original: number
+    timed_thumbnails: number
+    visual_impaired: number
+}
+
+export interface Tags2 {
+    BPS: string
+    DURATION: string
+    NUMBER_OF_BYTES: string
+    NUMBER_OF_FRAMES: string
+    _STATISTICS_TAGS: string
+    _STATISTICS_WRITING_APP: string
+    _STATISTICS_WRITING_DATE_UTC: string
+}
+
+export interface MovieData {
+    added: string
+    category_id: string
+    container_extension: string
+    custom_sid: string
+    direct_source: string
+    name: string
+    stream_id: number
 }
 
 export interface XtreamSeries {
