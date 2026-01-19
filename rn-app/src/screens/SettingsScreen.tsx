@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { xtreamService } from '../services/xtreamService';
 import { cacheService } from '../services/cacheService';
+import { responsiveFontSize, spacing, moderateScale } from '../utils/responsive';
 
 const SettingsScreen = ({ navigation }: any) => {
     const [clearing, setClearing] = useState(false);
@@ -48,11 +49,7 @@ const SettingsScreen = ({ navigation }: any) => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                    <Text style={styles.backButtonText}>← Back</Text>
-                </TouchableOpacity>
                 <Text style={styles.title}>Settings</Text>
-                <View style={{ width: 60 }} />
             </View>
 
             <ScrollView contentContainerStyle={styles.content}>
@@ -91,64 +88,55 @@ const styles = StyleSheet.create({
         backgroundColor: '#000',
     },
     header: {
-        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: 15,
-        paddingVertical: 10,
+        paddingHorizontal: spacing.md,
+        paddingVertical: spacing.md,
         borderBottomWidth: 1,
         borderBottomColor: '#333',
     },
-    backButton: {
-        width: 60,
-    },
-    backButtonText: {
-        color: '#007AFF',
-        fontSize: 16,
-    },
     title: {
-        fontSize: 20,
+        fontSize: responsiveFontSize(20),
         fontWeight: 'bold',
         color: '#fff',
     },
     content: {
-        padding: 20,
+        padding: spacing.md,
     },
     section: {
-        marginBottom: 30,
+        marginBottom: spacing.lg,
     },
     sectionTitle: {
         color: '#666',
-        fontSize: 13,
+        fontSize: responsiveFontSize(13),
         textTransform: 'uppercase',
-        marginBottom: 10,
-        marginLeft: 5,
+        marginBottom: spacing.sm,
+        marginLeft: spacing.xs,
     },
     settingItem: {
         backgroundColor: '#1a1a1a',
-        padding: 15,
-        borderRadius: 10,
-        marginBottom: 10,
+        padding: spacing.md,
+        borderRadius: moderateScale(10),
+        marginBottom: spacing.sm,
         borderWidth: 1,
         borderColor: '#333',
     },
     settingLabel: {
         color: '#fff',
-        fontSize: 16,
+        fontSize: responsiveFontSize(16),
         fontWeight: '500',
     },
     settingSubLabel: {
         color: '#888',
-        fontSize: 12,
-        marginTop: 4,
+        fontSize: responsiveFontSize(12),
+        marginTop: spacing.xs,
     },
     footer: {
-        marginTop: 20,
+        marginTop: spacing.md,
         alignItems: 'center',
     },
     versionText: {
         color: '#444',
-        fontSize: 14,
+        fontSize: responsiveFontSize(14),
     },
 });
 

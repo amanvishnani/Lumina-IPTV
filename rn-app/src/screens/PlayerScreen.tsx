@@ -8,14 +8,22 @@ import {
     ActivityIndicator,
     TouchableWithoutFeedback,
     Animated,
-    Dimensions,
 } from 'react-native';
 import { VLCPlayer } from 'react-native-vlc-media-player';
 import { BlurView } from '@react-native-community/blur';
 import Slider from '@react-native-community/slider';
 import { xtreamService } from '../services/xtreamService';
+import {
+    getScreenDimensions,
+    moderateScale,
+    responsiveFontSize,
+    spacing,
+    getSafeAreaPadding,
+    responsiveValue
+} from '../utils/responsive';
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+
+
 
 const PlayerScreen = ({ route, navigation }: any) => {
     const { streamId, streamType, extension } = route.params;
@@ -243,8 +251,8 @@ const styles = StyleSheet.create({
     controlsOverlay: {
         ...StyleSheet.absoluteFillObject,
         justifyContent: 'space-between',
-        paddingVertical: 30,
-        paddingHorizontal: 40,
+        paddingVertical: getSafeAreaPadding().vertical,
+        paddingHorizontal: getSafeAreaPadding().horizontal,
     },
     // Top Bar Styles
     topContainer: {
@@ -254,33 +262,33 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        borderRadius: 30,
-        paddingHorizontal: 8,
-        paddingVertical: 6,
+        borderRadius: moderateScale(30),
+        paddingHorizontal: spacing.sm,
+        paddingVertical: spacing.xs,
         overflow: 'hidden',
         borderWidth: 1,
         borderColor: 'rgba(255,255,255,0.15)',
     },
     backButton: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
+        width: moderateScale(40),
+        height: moderateScale(40),
+        borderRadius: moderateScale(20),
         backgroundColor: 'rgba(255,255,255,0.1)',
         justifyContent: 'center',
         alignItems: 'center',
     },
     backButtonText: {
         color: '#fff',
-        fontSize: 18,
+        fontSize: responsiveFontSize(18),
         fontWeight: '200',
     },
     titleWrapper: {
-        paddingHorizontal: 20,
-        maxWidth: 250,
+        paddingHorizontal: spacing.md,
+        maxWidth: responsiveValue(250, 400),
     },
     streamTitle: {
         color: '#fff',
-        fontSize: 14,
+        fontSize: responsiveFontSize(14),
         fontWeight: '600',
         letterSpacing: 0.5,
     },
@@ -289,12 +297,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 30,
+        gap: responsiveValue(30, 50),
     },
     skipPill: {
-        width: 60,
-        height: 60,
-        borderRadius: 30,
+        width: moderateScale(60),
+        height: moderateScale(60),
+        borderRadius: moderateScale(30),
         overflow: 'hidden',
         backgroundColor: 'rgba(255,255,255,0.05)',
         borderWidth: 1,
@@ -307,18 +315,18 @@ const styles = StyleSheet.create({
     },
     midButtonText: {
         color: '#fff',
-        fontSize: 24,
+        fontSize: responsiveFontSize(24),
     },
     skipLabel: {
         color: '#fff',
-        fontSize: 10,
+        fontSize: responsiveFontSize(10),
         fontWeight: 'bold',
         marginTop: -2,
     },
     playPill: {
-        width: 90,
-        height: 90,
-        borderRadius: 45,
+        width: moderateScale(90),
+        height: moderateScale(90),
+        borderRadius: moderateScale(45),
         overflow: 'hidden',
         backgroundColor: 'rgba(255,255,255,0.1)',
         borderWidth: 1.5,
@@ -335,7 +343,7 @@ const styles = StyleSheet.create({
     },
     playPauseIcon: {
         color: '#fff',
-        fontSize: 44,
+        fontSize: responsiveFontSize(44),
         includeFontPadding: false,
         textAlignVertical: 'center',
     },
@@ -344,28 +352,28 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     bottomPill: {
-        width: '90%',
+        width: responsiveValue('90%', '70%'),
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        borderRadius: 30,
-        paddingHorizontal: 20,
-        paddingVertical: 10,
+        borderRadius: moderateScale(30),
+        paddingHorizontal: spacing.md,
+        paddingVertical: spacing.sm,
         overflow: 'hidden',
         borderWidth: 1,
         borderColor: 'rgba(255,255,255,0.15)',
     },
     timeLabel: {
         color: '#fff',
-        fontSize: 12,
+        fontSize: responsiveFontSize(12),
         fontWeight: '500',
-        width: 50,
+        width: moderateScale(50),
         textAlign: 'center',
     },
     slider: {
         flex: 1,
-        height: 40,
-        marginHorizontal: 10,
+        height: moderateScale(40),
+        marginHorizontal: spacing.sm,
     },
 });
 

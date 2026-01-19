@@ -14,6 +14,7 @@ import {
 import { xtreamService } from '../services/xtreamService';
 import { XtreamVodInfo } from '../types';
 import { playInExternalPlayer } from '../utils/playerUtils';
+import { responsiveFontSize, spacing, moderateScale } from '../utils/responsive';
 
 const VodDetailsScreen = ({ route, navigation }: any) => {
     const { streamId } = route.params;
@@ -34,6 +35,41 @@ const VodDetailsScreen = ({ route, navigation }: any) => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const formatAudioInfo = () => {
+        if (!movieInfo?.info?.audio) return 'Not available';
+        const audio = movieInfo.info.audio;
+        const codec = audio.codec_name?.toUpperCase() || 'Unknown';
+        const channels = audio.channels || 0;
+        const channelLayout = audio.channel_layout || '';
+
+        let channelDesc = '';
+        if (channels === 1) channelDesc = 'Mono';
+        else if (channels === 2) channelDesc = 'Stereo';
+        else if (channels === 6) channelDesc = '5.1 Surround';
+        else if (channels === 8) channelDesc = '7.1 Surround';
+        else if (channelLayout) channelDesc = channelLayout;
+        else channelDesc = `${channels} channels`;
+
+        return `${codec} ${channelDesc}`;
+    };
+
+    const formatVideoInfo = () => {
+        if (!movieInfo?.info?.video) return 'Not available';
+        const video = movieInfo.info.video;
+        const codec = video.codec_name?.toUpperCase() || 'Unknown';
+        const width = video.width || 0;
+        const height = video.height || 0;
+        const resolution = width && height ? `${width}x${height}` : '';
+
+        let quality = '';
+        if (height >= 2160) quality = '4K';
+        else if (height >= 1080) quality = '1080p';
+        else if (height >= 720) quality = '720p';
+        else if (height >= 480) quality = '480p';
+
+        return `${codec} ${quality || resolution}`;
     };
 
     const handleDownload = async () => {
@@ -156,6 +192,18 @@ const VodDetailsScreen = ({ route, navigation }: any) => {
                             <Text style={styles.infoLabel}>Runtime</Text>
                             <Text style={styles.infoValue}>{info.duration || 'N/A'}</Text>
                         </View>
+
+                        <Text style={[styles.sectionTitle, { marginTop: spacing.lg }]}>Technical Details</Text>
+
+                        <View style={styles.infoRow}>
+                            <Text style={styles.infoLabel}>Audio</Text>
+                            <Text style={styles.infoValue}>{formatAudioInfo()}</Text>
+                        </View>
+
+                        <View style={styles.infoRow}>
+                            <Text style={styles.infoLabel}>Video</Text>
+                            <Text style={styles.infoValue}>{formatVideoInfo()}</Text>
+                        </View>
                     </View>
                 </View>
             </ScrollView>
@@ -181,108 +229,108 @@ const styles = StyleSheet.create({
     },
     backdrop: {
         width: '100%',
-        height: 250,
+        height: moderateScale(250),
         opacity: 0.6,
     },
     content: {
-        padding: 20,
-        marginTop: -50,
+        padding: spacing.md,
+        marginTop: moderateScale(-50),
     },
     header: {
         flexDirection: 'row',
     },
     poster: {
-        width: 100,
-        height: 150,
-        borderRadius: 8,
+        width: moderateScale(100),
+        height: moderateScale(150),
+        borderRadius: moderateScale(8),
         borderWidth: 2,
         borderColor: '#333',
     },
     headerInfo: {
         flex: 1,
-        marginLeft: 15,
+        marginLeft: spacing.md,
         justifyContent: 'flex-end',
-        paddingBottom: 10,
+        paddingBottom: spacing.sm,
     },
     title: {
         color: '#fff',
-        fontSize: 22,
+        fontSize: responsiveFontSize(22),
         fontWeight: 'bold',
     },
     meta: {
         color: '#aaa',
-        fontSize: 14,
-        marginTop: 5,
+        fontSize: responsiveFontSize(14),
+        marginTop: spacing.xs,
     },
     actions: {
         flexDirection: 'row',
-        marginTop: 25,
-        gap: 15,
+        marginTop: spacing.lg,
+        gap: spacing.md,
     },
     playButton: {
         flex: 1,
         backgroundColor: '#fff',
-        padding: 12,
-        borderRadius: 8,
+        padding: spacing.sm + 4,
+        borderRadius: moderateScale(8),
         alignItems: 'center',
     },
     playButtonText: {
         color: '#000',
-        fontSize: 16,
+        fontSize: responsiveFontSize(16),
         fontWeight: 'bold',
     },
     downloadButton: {
         flex: 1,
         backgroundColor: '#333',
-        padding: 12,
-        borderRadius: 8,
+        padding: spacing.sm + 4,
+        borderRadius: moderateScale(8),
         alignItems: 'center',
     },
     downloadButtonText: {
         color: '#fff',
-        fontSize: 16,
+        fontSize: responsiveFontSize(16),
         fontWeight: 'bold',
     },
     trailerButton: {
         backgroundColor: '#FF0000',
-        padding: 12,
-        borderRadius: 8,
+        padding: spacing.sm + 4,
+        borderRadius: moderateScale(8),
         alignItems: 'center',
-        marginTop: 15,
+        marginTop: spacing.md,
     },
     trailerButtonText: {
         color: '#fff',
-        fontSize: 16,
+        fontSize: responsiveFontSize(16),
         fontWeight: 'bold',
     },
     details: {
-        marginTop: 30,
+        marginTop: spacing.xl,
     },
     sectionTitle: {
         color: '#fff',
-        fontSize: 18,
+        fontSize: responsiveFontSize(18),
         fontWeight: 'bold',
-        marginBottom: 10,
+        marginBottom: spacing.sm,
     },
     plot: {
         color: '#ccc',
-        fontSize: 15,
+        fontSize: responsiveFontSize(15),
         lineHeight: 22,
-        marginBottom: 20,
+        marginBottom: spacing.md,
     },
     infoRow: {
         flexDirection: 'row',
-        marginBottom: 10,
+        marginBottom: spacing.sm,
     },
     infoLabel: {
         color: '#888',
-        width: 80,
-        fontSize: 14,
+        width: moderateScale(80),
+        fontSize: responsiveFontSize(14),
     },
     infoValue: {
         color: '#fff',
         flex: 1,
-        fontSize: 14,
+        fontSize: responsiveFontSize(14),
     },
     fabBack: {
         position: 'absolute',

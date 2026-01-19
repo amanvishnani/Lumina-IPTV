@@ -9,14 +9,23 @@ import {
     ActivityIndicator,
     Image,
     SafeAreaView,
-    Dimensions,
 } from 'react-native';
 import { xtreamService } from '../services/xtreamService';
 import { XtreamCategory, XtreamSeries } from '../types';
+import {
+    getGridColumns,
+    responsiveFontSize,
+    spacing,
+    moderateScale,
+    getScreenDimensions
+} from '../utils/responsive';
 
-const { width } = Dimensions.get('window');
-const columnCount = 3;
-const itemWidth = (width - 40) / columnCount;
+const getItemWidth = () => {
+    const { width } = getScreenDimensions();
+    const columnCount = getGridColumns();
+    const totalSpacing = spacing.md * 2 + (spacing.sm * 2 * columnCount);
+    return (width - totalSpacing) / columnCount;
+};
 
 const SeriesListScreen = ({ navigation }: any) => {
     const [categories, setCategories] = useState<XtreamCategory[]>([]);
@@ -74,30 +83,31 @@ const SeriesListScreen = ({ navigation }: any) => {
         setPage(1);
     };
 
-    const renderSeriesItem = ({ item }: { item: XtreamSeries }) => (
-        <TouchableOpacity
-            style={styles.seriesCard}
-            onPress={() => navigation.navigate('SeriesDetails', { seriesId: item.series_id })}
-        >
-            <Image
-                source={{ uri: item.cover || 'https://via.placeholder.com/150x225' }}
-                style={styles.poster}
-                resizeMode="cover"
-            />
-            <Text style={styles.seriesName} numberOfLines={2}>{item.name}</Text>
-        </TouchableOpacity>
-    );
+    const renderSeriesItem = ({ item }: { item: XtreamSeries }) => {
+        const itemWidth = getItemWidth();
+        return (
+            <TouchableOpacity
+                style={[styles.seriesCard, { width: itemWidth }]}
+                onPress={() => navigation.navigate('SeriesDetails', { seriesId: item.series_id })}
+            >
+                <Image
+                    source={{ uri: item.cover || 'https://via.placeholder.com/150x225' }}
+                    style={[styles.poster, { height: itemWidth * 1.5 }]}
+                    resizeMode="cover"
+                />
+                <Text style={styles.seriesName} numberOfLines={2}>{item.name}</Text>
+            </TouchableOpacity>
+        );
+    };
+
+    const numColumns = getGridColumns();
 
     const paginatedData = filteredSeries.slice(0, page * pageSize);
 
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Text style={styles.backText}>Back</Text>
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>TV Shows (Series)</Text>
-                <View style={{ width: 40 }} />
+                <Text style={styles.headerTitle}>TV Shows</Text>
             </View>
 
             <View style={styles.controls}>
@@ -140,10 +150,11 @@ const SeriesListScreen = ({ navigation }: any) => {
                 </View>
             ) : (
                 <FlatList
+                    key={numColumns}
                     data={paginatedData}
                     keyExtractor={(item) => item.series_id.toString()}
                     renderItem={renderSeriesItem}
-                    numColumns={columnCount}
+                    numColumns={numColumns}
                     onEndReached={() => {
                         if (paginatedData.length < filteredSeries.length) {
                             setPage(page + 1);
@@ -166,40 +177,36 @@ const styles = StyleSheet.create({
         backgroundColor: '#000',
     },
     header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 20,
-    },
-    backText: {
-        color: '#007AFF',
-        fontSize: 16,
+        padding: spacing.md,
+        borderBottomWidth: 1,
+        borderBottomColor: '#333',
     },
     headerTitle: {
         color: '#fff',
-        fontSize: 20,
+        fontSize: responsiveFontSize(20),
         fontWeight: 'bold',
     },
     controls: {
-        paddingHorizontal: 15,
+        paddingHorizontal: spacing.md,
     },
     searchInput: {
         backgroundColor: '#1a1a1a',
-        borderRadius: 8,
-        padding: 12,
+        borderRadius: moderateScale(8),
+        padding: spacing.sm + 4,
         color: '#fff',
-        fontSize: 16,
-        marginBottom: 15,
+        fontSize: responsiveFontSize(16),
+        marginBottom: spacing.md,
     },
     categoryList: {
-        marginBottom: 15,
+        marginBottom: spacing.md,
     },
     categoryItem: {
-        paddingHorizontal: 15,
-        paddingVertical: 8,
-        borderRadius: 20,
+        paddingHorizontal: spacing.md,
+        paddingVertical: spacing.sm,
+        borderRadius: moderateScale(20),
         backgroundColor: '#1a1a1a',
-        marginRight: 10,
+        marginRight: spacing.sm,
         borderWidth: 1,
         borderColor: '#333',
     },
@@ -209,31 +216,29 @@ const styles = StyleSheet.create({
     },
     categoryText: {
         color: '#ccc',
-        fontSize: 14,
+        fontSize: responsiveFontSize(14),
     },
     categoryTextActive: {
         color: '#fff',
         fontWeight: 'bold',
     },
     listContent: {
-        paddingHorizontal: 10,
-        paddingBottom: 20,
+        paddingHorizontal: spacing.sm,
+        paddingBottom: spacing.md,
     },
     seriesCard: {
-        width: itemWidth,
-        marginHorizontal: 5,
-        marginBottom: 20,
+        marginHorizontal: spacing.xs,
+        marginBottom: spacing.md,
     },
     poster: {
         width: '100%',
-        height: itemWidth * 1.5,
-        borderRadius: 8,
+        borderRadius: moderateScale(8),
         backgroundColor: '#1a1a1a',
     },
     seriesName: {
         color: '#fff',
-        fontSize: 12,
-        marginTop: 8,
+        fontSize: responsiveFontSize(12),
+        marginTop: spacing.sm,
         textAlign: 'center',
     },
     centerLoader: {
@@ -244,8 +249,8 @@ const styles = StyleSheet.create({
     noData: {
         color: '#888',
         textAlign: 'center',
-        marginTop: 50,
-        fontSize: 16,
+        marginTop: moderateScale(50),
+        fontSize: responsiveFontSize(16),
     },
 });
 

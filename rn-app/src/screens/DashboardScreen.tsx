@@ -12,6 +12,13 @@ import {
 } from 'react-native';
 import { xtreamService } from '../services/xtreamService';
 import { XtreamCategory, XtreamStream } from '../types';
+import {
+    getGridColumns,
+    responsiveFontSize,
+    spacing,
+    moderateScale,
+    responsiveValue
+} from '../utils/responsive';
 
 const DashboardScreen = ({ navigation }: any) => {
     const [categories, setCategories] = useState<XtreamCategory[]>([]);
@@ -89,6 +96,8 @@ const DashboardScreen = ({ navigation }: any) => {
         </TouchableOpacity>
     );
 
+    const numColumns = getGridColumns();
+
     const paginatedData = filteredStreams.slice(0, page * pageSize);
 
     return (
@@ -136,24 +145,17 @@ const DashboardScreen = ({ navigation }: any) => {
                 />
             </View>
 
-            <View style={styles.navButtons}>
-                <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Movies')}>
-                    <Text style={styles.navButtonText}>Movies</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate('Series')}>
-                    <Text style={styles.navButtonText}>Series</Text>
-                </TouchableOpacity>
-            </View>
-
             {loading && page === 1 ? (
                 <View style={styles.centerLoader}>
                     <ActivityIndicator size="large" color="#007AFF" />
                 </View>
             ) : (
                 <FlatList
+                    key={numColumns}
                     data={paginatedData}
                     keyExtractor={(item) => item.stream_id.toString()}
                     renderItem={renderStreamItem}
+                    numColumns={numColumns}
                     onEndReached={() => {
                         if (paginatedData.length < filteredStreams.length) {
                             setPage(page + 1);
@@ -161,6 +163,7 @@ const DashboardScreen = ({ navigation }: any) => {
                     }}
                     onEndReachedThreshold={0.5}
                     contentContainerStyle={styles.listContent}
+                    columnWrapperStyle={numColumns > 1 ? styles.columnWrapper : undefined}
                     ListEmptyComponent={
                         <Text style={styles.noData}>No channels found</Text>
                     }
@@ -179,39 +182,39 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 20,
+        padding: spacing.md,
     },
     headerTitle: {
         color: '#fff',
-        fontSize: 24,
+        fontSize: responsiveFontSize(24),
         fontWeight: 'bold',
     },
     settingsText: {
         color: '#007AFF',
-        fontSize: 16,
+        fontSize: responsiveFontSize(16),
     },
     controls: {
-        paddingHorizontal: 15,
+        paddingHorizontal: spacing.md,
     },
     searchBar: {
         backgroundColor: '#1a1a1a',
-        borderRadius: 10,
-        marginBottom: 15,
+        borderRadius: moderateScale(10),
+        marginBottom: spacing.md,
     },
     searchInput: {
-        padding: 12,
+        padding: spacing.sm + 4,
         color: '#fff',
-        fontSize: 16,
+        fontSize: responsiveFontSize(16),
     },
     categoryList: {
-        marginBottom: 15,
+        marginBottom: spacing.md,
     },
     categoryItem: {
-        paddingHorizontal: 15,
-        paddingVertical: 8,
-        borderRadius: 20,
+        paddingHorizontal: spacing.md,
+        paddingVertical: spacing.sm,
+        borderRadius: moderateScale(20),
         backgroundColor: '#1a1a1a',
-        marginRight: 10,
+        marginRight: spacing.sm,
         borderWidth: 1,
         borderColor: '#333',
     },
@@ -221,58 +224,43 @@ const styles = StyleSheet.create({
     },
     categoryText: {
         color: '#ccc',
-        fontSize: 14,
+        fontSize: responsiveFontSize(14),
     },
     categoryTextActive: {
         color: '#fff',
         fontWeight: 'bold',
     },
-    navButtons: {
-        flexDirection: 'row',
-        paddingHorizontal: 15,
-        marginBottom: 15,
-        gap: 10,
-    },
-    navButton: {
-        flex: 1,
-        backgroundColor: '#2a2a2a',
-        padding: 12,
-        borderRadius: 8,
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: '#444',
-    },
-    navButtonText: {
-        color: '#fff',
-        fontWeight: 'bold',
-    },
     listContent: {
-        paddingHorizontal: 15,
-        paddingBottom: 20,
+        paddingHorizontal: spacing.md,
+        paddingBottom: spacing.md,
+    },
+    columnWrapper: {
+        justifyContent: 'space-between',
     },
     streamItem: {
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: '#1a1a1a',
-        padding: 12,
-        borderRadius: 10,
-        marginBottom: 10,
+        padding: spacing.sm + 4,
+        borderRadius: moderateScale(10),
+        marginBottom: spacing.sm,
         borderWidth: 1,
         borderColor: '#333',
+        flex: responsiveValue(1, 0.32),
     },
     streamIcon: {
-        width: 50,
-        height: 50,
-        borderRadius: 5,
+        width: moderateScale(50),
+        height: moderateScale(50),
+        borderRadius: moderateScale(5),
         backgroundColor: '#333',
     },
     streamInfo: {
-        marginLeft: 15,
+        marginLeft: spacing.md,
         flex: 1,
     },
     streamName: {
         color: '#fff',
-        fontSize: 16,
+        fontSize: responsiveFontSize(16),
         fontWeight: '500',
     },
     centerLoader: {
@@ -283,8 +271,8 @@ const styles = StyleSheet.create({
     noData: {
         color: '#888',
         textAlign: 'center',
-        marginTop: 50,
-        fontSize: 16,
+        marginTop: moderateScale(50),
+        fontSize: responsiveFontSize(16),
     },
 });
 

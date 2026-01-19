@@ -9,14 +9,23 @@ import {
     ActivityIndicator,
     Image,
     SafeAreaView,
-    Dimensions,
 } from 'react-native';
 import { xtreamService } from '../services/xtreamService';
 import { XtreamCategory, XtreamStream } from '../types';
+import {
+    getGridColumns,
+    responsiveFontSize,
+    spacing,
+    moderateScale,
+    getScreenDimensions
+} from '../utils/responsive';
 
-const { width } = Dimensions.get('window');
-const columnCount = 3;
-const itemWidth = (width - 40) / columnCount;
+const getItemWidth = () => {
+    const { width } = getScreenDimensions();
+    const columnCount = getGridColumns();
+    const totalSpacing = spacing.md * 2 + (spacing.sm * 2 * columnCount);
+    return (width - totalSpacing) / columnCount;
+};
 
 const VodListScreen = ({ navigation }: any) => {
     const [categories, setCategories] = useState<XtreamCategory[]>([]);
@@ -74,30 +83,31 @@ const VodListScreen = ({ navigation }: any) => {
         setPage(1);
     };
 
-    const renderVodItem = ({ item }: { item: XtreamStream }) => (
-        <TouchableOpacity
-            style={styles.vodCard}
-            onPress={() => navigation.navigate('VodDetails', { streamId: item.stream_id })}
-        >
-            <Image
-                source={{ uri: item.stream_icon || 'https://via.placeholder.com/150x225' }}
-                style={styles.poster}
-                resizeMode="cover"
-            />
-            <Text style={styles.vodName} numberOfLines={2}>{item.name}</Text>
-        </TouchableOpacity>
-    );
+    const renderVodItem = ({ item }: { item: XtreamStream }) => {
+        const itemWidth = getItemWidth();
+        return (
+            <TouchableOpacity
+                style={[styles.vodCard, { width: itemWidth }]}
+                onPress={() => navigation.navigate('VodDetails', { streamId: item.stream_id })}
+            >
+                <Image
+                    source={{ uri: item.stream_icon || 'https://via.placeholder.com/150x225' }}
+                    style={[styles.poster, { height: itemWidth * 1.5 }]}
+                    resizeMode="cover"
+                />
+                <Text style={styles.vodName} numberOfLines={2}>{item.name}</Text>
+            </TouchableOpacity>
+        );
+    };
+
+    const numColumns = getGridColumns();
 
     const paginatedData = filteredStreams.slice(0, page * pageSize);
 
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Text style={styles.backText}>Back</Text>
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>Movies (VOD)</Text>
-                <View style={{ width: 40 }} />
+                <Text style={styles.headerTitle}>Movies</Text>
             </View>
 
             <View style={styles.controls}>
@@ -140,10 +150,11 @@ const VodListScreen = ({ navigation }: any) => {
                 </View>
             ) : (
                 <FlatList
+                    key={numColumns}
                     data={paginatedData}
                     keyExtractor={(item) => item.stream_id.toString()}
                     renderItem={renderVodItem}
-                    numColumns={columnCount}
+                    numColumns={numColumns}
                     onEndReached={() => {
                         if (paginatedData.length < filteredStreams.length) {
                             setPage(page + 1);
@@ -166,40 +177,36 @@ const styles = StyleSheet.create({
         backgroundColor: '#000',
     },
     header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 20,
-    },
-    backText: {
-        color: '#007AFF',
-        fontSize: 16,
+        padding: spacing.md,
+        borderBottomWidth: 1,
+        borderBottomColor: '#333',
     },
     headerTitle: {
         color: '#fff',
-        fontSize: 20,
+        fontSize: responsiveFontSize(20),
         fontWeight: 'bold',
     },
     controls: {
-        paddingHorizontal: 15,
+        paddingHorizontal: spacing.md,
     },
     searchInput: {
         backgroundColor: '#1a1a1a',
-        borderRadius: 8,
-        padding: 12,
+        borderRadius: moderateScale(8),
+        padding: spacing.sm + 4,
         color: '#fff',
-        fontSize: 16,
-        marginBottom: 15,
+        fontSize: responsiveFontSize(16),
+        marginBottom: spacing.md,
     },
     categoryList: {
-        marginBottom: 15,
+        marginBottom: spacing.md,
     },
     categoryItem: {
-        paddingHorizontal: 15,
-        paddingVertical: 8,
-        borderRadius: 20,
+        paddingHorizontal: spacing.md,
+        paddingVertical: spacing.sm,
+        borderRadius: moderateScale(20),
         backgroundColor: '#1a1a1a',
-        marginRight: 10,
+        marginRight: spacing.sm,
         borderWidth: 1,
         borderColor: '#333',
     },
@@ -209,31 +216,29 @@ const styles = StyleSheet.create({
     },
     categoryText: {
         color: '#ccc',
-        fontSize: 14,
+        fontSize: responsiveFontSize(14),
     },
     categoryTextActive: {
         color: '#fff',
         fontWeight: 'bold',
     },
     listContent: {
-        paddingHorizontal: 10,
-        paddingBottom: 20,
+        paddingHorizontal: spacing.sm,
+        paddingBottom: spacing.md,
     },
     vodCard: {
-        width: itemWidth,
-        marginHorizontal: 5,
-        marginBottom: 20,
+        marginHorizontal: spacing.xs,
+        marginBottom: spacing.md,
     },
     poster: {
         width: '100%',
-        height: itemWidth * 1.5,
-        borderRadius: 8,
+        borderRadius: moderateScale(8),
         backgroundColor: '#1a1a1a',
     },
     vodName: {
         color: '#fff',
-        fontSize: 12,
-        marginTop: 8,
+        fontSize: responsiveFontSize(12),
+        marginTop: spacing.sm,
         textAlign: 'center',
     },
     centerLoader: {
@@ -244,8 +249,8 @@ const styles = StyleSheet.create({
     noData: {
         color: '#888',
         textAlign: 'center',
-        marginTop: 50,
-        fontSize: 16,
+        marginTop: moderateScale(50),
+        fontSize: responsiveFontSize(16),
     },
 });
 
