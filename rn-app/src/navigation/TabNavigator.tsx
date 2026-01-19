@@ -4,6 +4,7 @@ import { Text, StyleSheet } from 'react-native';
 import DashboardScreen from '../screens/DashboardScreen';
 import VodListScreen from '../screens/VodListScreen';
 import SeriesListScreen from '../screens/SeriesListScreen';
+import DownloadsScreen from '../screens/DownloadsScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import { responsiveFontSize, moderateScale, spacing } from '../utils/responsive';
 
@@ -18,6 +19,8 @@ const TabIcon = ({ label, focused }: { label: string; focused: boolean }) => {
                 return '🎬';
             case 'Series':
                 return '📺';
+            case 'Downloads':
+                return '📥';
             case 'Settings':
                 return '⚙️';
             default:
@@ -66,6 +69,14 @@ export default function TabNavigator() {
                 options={{
                     tabBarLabel: 'Series',
                     tabBarIcon: ({ focused }) => <TabIcon label="Series" focused={focused} />,
+                }}
+            />
+            <Tab.Screen
+                name="Downloads"
+                component={DownloadsScreen}
+                options={{
+                    tabBarLabel: 'Downloads',
+                    tabBarIcon: ({ focused }) => <TabIcon label="Downloads" focused={focused} />,
                 }}
             />
             <Tab.Screen

@@ -26,6 +26,7 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+		<string>infuse</string>
 		<string>vlc</string>
 	</array>
 	<key>NSAllowsArbitraryLoads</key>

@@ -229,3 +229,17 @@ export interface XtreamSeriesInfo {
     info: any;
     episodes: { [key: string]: XtreamEpisode[] };
 }
+
+export interface DownloadMetadata {
+    id: string;
+    streamId: number;
+    title: string;
+    posterUrl: string;
+    fileSize: number;
+    downloadedSize: number;
+    status: 'downloading' | 'paused' | 'completed' | 'failed';
+    filePath: string;
+    extension: string;
+    createdAt: string;
+    completedAt?: string;
+}

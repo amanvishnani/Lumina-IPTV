@@ -15,11 +15,14 @@ import { xtreamService } from '../services/xtreamService';
 import { XtreamVodInfo } from '../types';
 import { playInExternalPlayer } from '../utils/playerUtils';
 import { responsiveFontSize, spacing, moderateScale } from '../utils/responsive';
+import { downloadService } from '../services/downloadService';
 
 const VodDetailsScreen = ({ route, navigation }: any) => {
     const { streamId } = route.params;
     const [movieInfo, setMovieInfo] = useState<XtreamVodInfo | null>(null);
     const [loading, setLoading] = useState(true);
+    const [downloading, setDownloading] = useState(false);
+    const [downloadProgress, setDownloadProgress] = useState(0);
 
     useEffect(() => {
         fetchMovieInfo();
@@ -74,19 +77,41 @@ const VodDetailsScreen = ({ route, navigation }: any) => {
 
     const handleDownload = async () => {
         if (!movieInfo) return;
-        const creds = await xtreamService.getCredentials();
-        if (!creds) return;
-
         const streamData = movieInfo.movie_data;
         if (!streamData) {
             Alert.alert('Error', 'Stream information not available.');
             return;
         }
 
-        const extension = streamData.container_extension || 'mp4';
-        const streamUrl = `${creds.url}/movie/${creds.username}/${creds.password}/${streamData.stream_id}.${extension}`;
+        try {
+            setDownloading(true);
+            const extension = streamData.container_extension || 'mp4';
 
-        Linking.openURL(streamUrl);
+            await downloadService.startDownload(
+                streamData.stream_id,
+                streamData.name,
+                movieInfo.info.movie_image,
+                extension,
+                (progress) => {
+                    setDownloadProgress(progress);
+                }
+            );
+
+            Alert.alert(
+                'Download Started',
+                'Your download has been started. Check the Downloads tab to monitor progress.',
+                [
+                    { text: 'OK' },
+                    { text: 'View Downloads', onPress: () => navigation.navigate('Main', { screen: 'Downloads' }) }
+                ]
+            );
+        } catch (error) {
+            console.error('Download error:', error);
+            Alert.alert('Error', 'Failed to start download.');
+        } finally {
+            setDownloading(false);
+            setDownloadProgress(0);
+        }
     };
 
     if (loading) {
@@ -153,8 +178,14 @@ const VodDetailsScreen = ({ route, navigation }: any) => {
                         >
                             <Text style={styles.playButtonText}>Play</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.downloadButton} onPress={handleDownload}>
-                            <Text style={styles.downloadButtonText}>Download</Text>
+                        <TouchableOpacity
+                            style={[styles.downloadButton, downloading && styles.downloadingButton]}
+                            onPress={handleDownload}
+                            disabled={downloading}
+                        >
+                            <Text style={styles.downloadButtonText}>
+                                {downloading ? `Downloading ${Math.round(downloadProgress * 100)}%` : 'Download'}
+                            </Text>
                         </TouchableOpacity>
                     </View>
 
@@ -290,6 +321,10 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: responsiveFontSize(16),
         fontWeight: 'bold',
+    },
+    downloadingButton: {
+        backgroundColor: '#555',
+        opacity: 0.8,
     },
     trailerButton: {
         backgroundColor: '#FF0000',
