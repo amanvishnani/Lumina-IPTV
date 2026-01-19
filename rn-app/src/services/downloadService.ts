@@ -13,6 +13,7 @@ export interface DownloadMetadata {
     status: 'downloading' | 'paused' | 'completed' | 'failed';
     filePath: string;
     extension: string;
+    type: 'movie' | 'series';
     createdAt: string;
     completedAt?: string;
     error?: string;
@@ -64,11 +65,12 @@ class DownloadService {
         streamId: number,
         title: string,
         posterUrl: string,
+        type: 'movie' | 'series' = 'movie',
         extension: string = 'mp4',
         onProgress?: (progress: number) => void
     ): Promise<string> {
         const id = `download_${streamId}_${Date.now()}`;
-        const streamUrl = await xtreamService.buildStreamUrl(streamId, 'movie', extension);
+        const streamUrl = await xtreamService.buildStreamUrl(streamId, type, extension);
 
         if (!streamUrl) {
             throw new Error('Could not build stream URL');
@@ -88,6 +90,7 @@ class DownloadService {
             status: 'downloading',
             filePath,
             extension,
+            type,
             createdAt: new Date().toISOString(),
         };
 
@@ -239,13 +242,13 @@ class DownloadService {
         onProgress?: (progress: number) => void
     ): Promise<void> {
         const metadata = await this.getDownload(id);
-        if (!metadata || metadata.status !== 'paused') {
-            throw new Error('Download not found or not paused');
+        if (!metadata || (metadata.status !== 'paused' && metadata.status !== 'failed')) {
+            throw new Error('Download not found or not in a resumable state');
         }
 
         const streamUrl = await xtreamService.buildStreamUrl(
             metadata.streamId,
-            'movie',
+            metadata.type,
             metadata.extension
         );
 

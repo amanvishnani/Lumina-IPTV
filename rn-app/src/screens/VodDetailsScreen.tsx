@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
     StyleSheet,
     View,
@@ -10,12 +10,13 @@ import {
     SafeAreaView,
     Linking,
     Alert,
+    Platform,
 } from 'react-native';
 import { xtreamService } from '../services/xtreamService';
 import { XtreamVodInfo } from '../types';
-import { playInExternalPlayer } from '../utils/playerUtils';
+import { showPlayerPicker } from '../utils/playerUtils';
 import { responsiveFontSize, spacing, moderateScale } from '../utils/responsive';
-import { downloadService } from '../services/downloadService';
+import { downloadService, DownloadMetadata } from '../services/downloadService';
 
 const VodDetailsScreen = ({ route, navigation }: any) => {
     const { streamId } = route.params;
@@ -23,10 +24,20 @@ const VodDetailsScreen = ({ route, navigation }: any) => {
     const [loading, setLoading] = useState(true);
     const [downloading, setDownloading] = useState(false);
     const [downloadProgress, setDownloadProgress] = useState(0);
+    const [download, setDownload] = useState<DownloadMetadata | null>(null);
+
+    const checkDownload = useCallback(async () => {
+        const downloads = await downloadService.getDownloads();
+        const found = downloads.find(d => d.streamId === streamId && d.type === 'movie');
+        setDownload(found || null);
+    }, [streamId]);
 
     useEffect(() => {
         fetchMovieInfo();
-    }, [streamId]);
+        checkDownload();
+        const interval = setInterval(checkDownload, 2000);
+        return () => clearInterval(interval);
+    }, [streamId, checkDownload]);
 
     const fetchMovieInfo = async () => {
         setLoading(true);
@@ -91,8 +102,9 @@ const VodDetailsScreen = ({ route, navigation }: any) => {
                 streamData.stream_id,
                 streamData.name,
                 movieInfo.info.movie_image,
+                'movie',
                 extension,
-                (progress) => {
+                (progress: number) => {
                     setDownloadProgress(progress);
                 }
             );
@@ -170,10 +182,11 @@ const VodDetailsScreen = ({ route, navigation }: any) => {
                     <View style={styles.actions}>
                         <TouchableOpacity
                             style={styles.playButton}
-                            onPress={() => playInExternalPlayer(
+                            onPress={() => showPlayerPicker(
                                 movie_data.stream_id,
                                 'movie',
-                                movie_data.container_extension || 'mp4'
+                                movie_data.container_extension || 'mp4',
+                                download?.downloadedSize && download.downloadedSize > 0 ? download.filePath : undefined
                             )}
                         >
                             <Text style={styles.playButtonText}>Play</Text>

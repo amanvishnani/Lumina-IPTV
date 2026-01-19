@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { downloadService, DownloadMetadata } from '../services/downloadService';
 import { responsiveFontSize, spacing, moderateScale, getGridColumns } from '../utils/responsive';
-import { Linking } from 'react-native';
+import { showPlayerPicker } from '../utils/playerUtils';
 
 const DownloadsScreen = () => {
     const [downloads, setDownloads] = useState<DownloadMetadata[]>([]);
@@ -38,35 +38,24 @@ const DownloadsScreen = () => {
     };
 
     const handlePlay = async (download: DownloadMetadata) => {
-        if (download.status !== 'completed') return;
-
-        const fileUrl = `file://${download.filePath}`;
-
-        // Try Infuse first
-        const infuseUrl = `infuse://x-callback-url/play?url=${encodeURIComponent(fileUrl)}`;
-        const canOpenInfuse = await Linking.canOpenURL('infuse://');
-
-        if (canOpenInfuse) {
-            await Linking.openURL(infuseUrl);
+        // Allow playing if download has at least some data
+        if (download.downloadedSize === 0) {
+            Alert.alert('Not Ready', 'Wait for the download to start before playing.');
             return;
         }
 
-        // Fallback to VLC
-        const vlcUrl = `vlc://${fileUrl}`;
-        const canOpenVLC = await Linking.canOpenURL('vlc://');
-
-        if (canOpenVLC) {
-            await Linking.openURL(vlcUrl);
-            return;
-        }
-
-        Alert.alert('No Player Found', 'Please install Infuse or VLC to play downloaded videos.');
+        showPlayerPicker(
+            download.id,
+            download.type as 'movie' | 'series',
+            'mp4',
+            download.filePath
+        );
     };
 
     const handlePauseResume = async (download: DownloadMetadata) => {
         if (download.status === 'downloading') {
             await downloadService.pauseDownload(download.id);
-        } else if (download.status === 'paused') {
+        } else if (download.status === 'paused' || download.status === 'failed') {
             await downloadService.resumeDownload(download.id);
         }
         await loadDownloads();
@@ -145,7 +134,7 @@ const DownloadsScreen = () => {
                 </View>
 
                 <View style={styles.actions}>
-                    {item.status === 'completed' && (
+                    {item.status !== 'failed' && (
                         <TouchableOpacity
                             style={styles.playButton}
                             onPress={() => handlePlay(item)}
@@ -154,13 +143,13 @@ const DownloadsScreen = () => {
                         </TouchableOpacity>
                     )}
 
-                    {(item.status === 'downloading' || item.status === 'paused') && (
+                    {(item.status === 'downloading' || item.status === 'paused' || item.status === 'failed') && (
                         <TouchableOpacity
                             style={styles.pauseButton}
                             onPress={() => handlePauseResume(item)}
                         >
                             <Text style={styles.pauseButtonText}>
-                                {item.status === 'downloading' ? '⏸' : '▶'}
+                                {item.status === 'downloading' ? '⏸' : item.status === 'failed' ? '🔄' : '▶'}
                             </Text>
                         </TouchableOpacity>
                     )}

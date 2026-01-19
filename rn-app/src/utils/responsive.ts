@@ -70,6 +70,7 @@ export const responsiveFontSize = (size: number): number => {
 
 // Spacing utilities
 export const spacing = {
+    xxs: moderateScale(2),
     xs: moderateScale(4),
     sm: moderateScale(8),
     md: moderateScale(16),
