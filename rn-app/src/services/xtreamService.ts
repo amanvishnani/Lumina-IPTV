@@ -32,7 +32,7 @@ class XtreamService {
             return cachedData;
         }
 
-        const response = await axios.get(url, { timeout: 10000 });
+        const response = await axios.get(url, { timeout: 30000 });
         await cacheService.set(url, response.data);
         return response.data;
     }

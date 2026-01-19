@@ -31,6 +31,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     return true
   }
+
 }
 
 class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
