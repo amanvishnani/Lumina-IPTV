@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { xtreamService } from '../services/xtreamService';
 import { XtreamSeriesInfo, XtreamEpisode } from '../types';
+import { playInExternalPlayer } from '../utils/playerUtils';
 
 const SeriesDetailsScreen = ({ route, navigation }: any) => {
     const { seriesId } = route.params;
@@ -121,11 +122,11 @@ const SeriesDetailsScreen = ({ route, navigation }: any) => {
                                 <TouchableOpacity
                                     key={ep.id}
                                     style={styles.episodeCard}
-                                    onPress={() => navigation.navigate('Player', {
-                                        streamId: ep.id,
-                                        streamType: 'series',
-                                        extension: ep.container_extension || 'mp4'
-                                    })}
+                                    onPress={() => playInExternalPlayer(
+                                        ep.id,
+                                        'series',
+                                        ep.container_extension || 'mp4'
+                                    )}
                                 >
                                     <View style={styles.epNumContainer}>
                                         <Text style={styles.epNum}>{ep.episode_num}</Text>

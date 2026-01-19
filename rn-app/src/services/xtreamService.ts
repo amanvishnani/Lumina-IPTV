@@ -156,6 +156,20 @@ class XtreamService {
         const creds = await this.getCredentials();
         return this.fetchWithCache<XtreamSeriesInfo>(`${baseUrl}?username=${creds!.username}&password=${creds!.password}&action=get_series_info&series_id=${seriesId}`);
     }
+
+    public async buildStreamUrl(streamId: number | string, streamType: 'live' | 'movie' | 'series', extension: string = 'mp4'): Promise<string | null> {
+        const creds = await this.getCredentials();
+        if (!creds) return null;
+
+        if (streamType === 'live') {
+            return `${creds.url}/${creds.username}/${creds.password}/${streamId}.m3u8`;
+        } else if (streamType === 'movie') {
+            return `${creds.url}/movie/${creds.username}/${creds.password}/${streamId}.${extension || 'mp4'}`;
+        } else if (streamType === 'series') {
+            return `${creds.url}/series/${creds.username}/${creds.password}/${streamId}.${extension || 'mp4'}`;
+        }
+        return null;
+    }
 }
 
 export const xtreamService = XtreamService.getInstance();

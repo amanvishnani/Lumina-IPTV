@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { xtreamService } from '../services/xtreamService';
 import { XtreamVodInfo } from '../types';
+import { playInExternalPlayer } from '../utils/playerUtils';
 
 const VodDetailsScreen = ({ route, navigation }: any) => {
     const { streamId } = route.params;
@@ -108,11 +109,11 @@ const VodDetailsScreen = ({ route, navigation }: any) => {
                     <View style={styles.actions}>
                         <TouchableOpacity
                             style={styles.playButton}
-                            onPress={() => navigation.navigate('Player', {
-                                streamId: movie_data.stream_id,
-                                streamType: 'movie',
-                                extension: movie_data.container_extension || 'mp4'
-                            })}
+                            onPress={() => playInExternalPlayer(
+                                movie_data.stream_id,
+                                'movie',
+                                movie_data.container_extension || 'mp4'
+                            )}
                         >
                             <Text style={styles.playButtonText}>Play</Text>
                         </TouchableOpacity>
