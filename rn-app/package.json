@@ -20,7 +20,7 @@
     "react-native-gesture-handler": "^2.30.0",
     "react-native-safe-area-context": "^5.5.2",
     "react-native-screens": "^4.19.0",
-    "react-native-video": "^6.18.0"
+    "react-native-vlc-media-player": "^1.0.98"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

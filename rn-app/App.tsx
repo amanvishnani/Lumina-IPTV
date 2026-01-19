@@ -10,6 +10,7 @@ import VodDetailsScreen from './src/screens/VodDetailsScreen';
 import SeriesListScreen from './src/screens/SeriesListScreen';
 import SeriesDetailsScreen from './src/screens/SeriesDetailsScreen';
 import PlayerScreen from './src/screens/PlayerScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
 import { xtreamService } from './src/services/xtreamService';
 
 const Stack = createStackNavigator();
@@ -52,6 +53,7 @@ export default function App() {
         <Stack.Screen name="Series" component={SeriesListScreen} />
         <Stack.Screen name="SeriesDetails" component={SeriesDetailsScreen} />
         <Stack.Screen name="Player" component={PlayerScreen} />
+        <Stack.Screen name="Settings" component={SettingsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -95,11 +95,8 @@ const DashboardScreen = ({ navigation }: any) => {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>Live TV</Text>
-                <TouchableOpacity onPress={() => {
-                    xtreamService.logout();
-                    navigation.replace('Login');
-                }}>
-                    <Text style={styles.logoutText}>Logout</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+                    <Text style={styles.settingsText}>Settings</Text>
                 </TouchableOpacity>
             </View>
 
@@ -189,8 +186,8 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
     },
-    logoutText: {
-        color: '#FF3B30',
+    settingsText: {
+        color: '#007AFF',
         fontSize: 16,
     },
     controls: {

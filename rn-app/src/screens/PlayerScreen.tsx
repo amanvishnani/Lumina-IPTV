@@ -7,8 +7,9 @@ import {
     SafeAreaView,
     StatusBar,
     Dimensions,
+    ActivityIndicator,
 } from 'react-native';
-import Video from 'react-native-video';
+import { VLCPlayer } from 'react-native-vlc-media-player';
 import { xtreamService } from '../services/xtreamService';
 
 const PlayerScreen = ({ route, navigation }: any) => {
@@ -50,12 +51,12 @@ const PlayerScreen = ({ route, navigation }: any) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Video
+            <VLCPlayer
                 source={{ uri: streamUrl }}
                 style={styles.fullScreen}
-                controls={true}
-                resizeMode="contain"
-                onError={(e) => console.error('Video Error:', e)}
+                autoplay={true}
+                videoAspectRatio="16:9"
+                onError={(e: any) => console.error('VLC Error:', e)}
                 onEnd={() => navigation.goBack()}
             />
 
@@ -66,10 +67,7 @@ const PlayerScreen = ({ route, navigation }: any) => {
     );
 };
 
-// Simple ActivityIndicator fallback since I didn't import it
-const ActivityIndicator = ({ size, color }: any) => (
-    <Text style={{ color, fontSize: 18 }}>Loading Stream...</Text>
-);
+// Ready to play
 
 const styles = StyleSheet.create({
     container: {

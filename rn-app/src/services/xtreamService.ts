@@ -9,6 +9,7 @@ import {
     XtreamSeries,
     XtreamSeriesInfo
 } from '../types';
+import { cacheService } from './cacheService';
 
 class XtreamService {
     private static instance: XtreamService;
@@ -23,6 +24,17 @@ class XtreamService {
             XtreamService.instance = new XtreamService();
         }
         return XtreamService.instance;
+    }
+
+    private async fetchWithCache<T>(url: string): Promise<T> {
+        const cachedData = await cacheService.get<T>(url);
+        if (cachedData) {
+            return cachedData;
+        }
+
+        const response = await axios.get(url, { timeout: 10000 });
+        await cacheService.set(url, response.data);
+        return response.data;
     }
 
     public async saveCredentials(creds: XtreamCredentials): Promise<void> {
@@ -88,8 +100,7 @@ class XtreamService {
     public async getLiveCategories(): Promise<XtreamCategory[]> {
         const baseUrl = await this.getApiUrl();
         const creds = await this.getCredentials();
-        const response = await axios.get(`${baseUrl}?username=${creds!.username}&password=${creds!.password}&action=get_live_categories`);
-        return response.data;
+        return this.fetchWithCache<XtreamCategory[]>(`${baseUrl}?username=${creds!.username}&password=${creds!.password}&action=get_live_categories`);
     }
 
     public async getLiveStreams(categoryId: string = ''): Promise<XtreamStream[]> {
@@ -99,15 +110,13 @@ class XtreamService {
         if (categoryId) {
             url += `&category_id=${categoryId}`;
         }
-        const response = await axios.get(url);
-        return response.data;
+        return this.fetchWithCache<XtreamStream[]>(url);
     }
 
     public async getVodCategories(): Promise<XtreamCategory[]> {
         const baseUrl = await this.getApiUrl();
         const creds = await this.getCredentials();
-        const response = await axios.get(`${baseUrl}?username=${creds!.username}&password=${creds!.password}&action=get_vod_categories`);
-        return response.data;
+        return this.fetchWithCache<XtreamCategory[]>(`${baseUrl}?username=${creds!.username}&password=${creds!.password}&action=get_vod_categories`);
     }
 
     public async getVodStreams(categoryId: string = ''): Promise<XtreamStream[]> {
@@ -117,22 +126,19 @@ class XtreamService {
         if (categoryId) {
             url += `&category_id=${categoryId}`;
         }
-        const response = await axios.get(url);
-        return response.data;
+        return this.fetchWithCache<XtreamStream[]>(url);
     }
 
     public async getVodInfo(streamId: number): Promise<XtreamVodInfo> {
         const baseUrl = await this.getApiUrl();
         const creds = await this.getCredentials();
-        const response = await axios.get(`${baseUrl}?username=${creds!.username}&password=${creds!.password}&action=get_vod_info&vod_id=${streamId}`);
-        return response.data;
+        return this.fetchWithCache<XtreamVodInfo>(`${baseUrl}?username=${creds!.username}&password=${creds!.password}&action=get_vod_info&vod_id=${streamId}`);
     }
 
     public async getSeriesCategories(): Promise<XtreamCategory[]> {
         const baseUrl = await this.getApiUrl();
         const creds = await this.getCredentials();
-        const response = await axios.get(`${baseUrl}?username=${creds!.username}&password=${creds!.password}&action=get_series_categories`);
-        return response.data;
+        return this.fetchWithCache<XtreamCategory[]>(`${baseUrl}?username=${creds!.username}&password=${creds!.password}&action=get_series_categories`);
     }
 
     public async getSeries(categoryId: string = ''): Promise<XtreamSeries[]> {
@@ -142,15 +148,13 @@ class XtreamService {
         if (categoryId) {
             url += `&category_id=${categoryId}`;
         }
-        const response = await axios.get(url);
-        return response.data;
+        return this.fetchWithCache<XtreamSeries[]>(url);
     }
 
     public async getSeriesInfo(seriesId: number): Promise<XtreamSeriesInfo> {
         const baseUrl = await this.getApiUrl();
         const creds = await this.getCredentials();
-        const response = await axios.get(`${baseUrl}?username=${creds!.username}&password=${creds!.password}&action=get_series_info&series_id=${seriesId}`);
-        return response.data;
+        return this.fetchWithCache<XtreamSeriesInfo>(`${baseUrl}?username=${creds!.username}&password=${creds!.password}&action=get_series_info&series_id=${seriesId}`);
     }
 }
 
