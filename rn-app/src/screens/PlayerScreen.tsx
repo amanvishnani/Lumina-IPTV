@@ -4,14 +4,18 @@ import {
     View,
     Text,
     TouchableOpacity,
-    SafeAreaView,
     StatusBar,
     ActivityIndicator,
     TouchableWithoutFeedback,
+    Animated,
+    Dimensions,
 } from 'react-native';
 import { VLCPlayer } from 'react-native-vlc-media-player';
+import { BlurView } from '@react-native-community/blur';
 import Slider from '@react-native-community/slider';
 import { xtreamService } from '../services/xtreamService';
+
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const PlayerScreen = ({ route, navigation }: any) => {
     const { streamId, streamType, extension } = route.params;
@@ -22,6 +26,7 @@ const PlayerScreen = ({ route, navigation }: any) => {
     const [showControls, setShowControls] = useState(true);
     const vlcRef = useRef<any>(null);
     const controlsTimer = useRef<any>(null);
+    const opacityAnim = useRef(new Animated.Value(1)).current;
 
     useEffect(() => {
         prepareStream();
@@ -51,10 +56,35 @@ const PlayerScreen = ({ route, navigation }: any) => {
 
     const resetControlsTimer = () => {
         if (controlsTimer.current) clearTimeout(controlsTimer.current);
-        setShowControls(true);
+        if (!showControls) {
+            setShowControls(true);
+            Animated.timing(opacityAnim, {
+                toValue: 1,
+                duration: 300,
+                useNativeDriver: true,
+            }).start();
+        }
+
         controlsTimer.current = setTimeout(() => {
-            setShowControls(false);
+            hideControls();
         }, 5000);
+    };
+
+    const hideControls = () => {
+        Animated.timing(opacityAnim, {
+            toValue: 0,
+            duration: 400,
+            useNativeDriver: true,
+        }).start(() => setShowControls(false));
+    };
+
+    const toggleControls = () => {
+        if (showControls) {
+            hideControls();
+            if (controlsTimer.current) clearTimeout(controlsTimer.current);
+        } else {
+            resetControlsTimer();
+        }
     };
 
     const togglePlayPause = () => {
@@ -106,53 +136,72 @@ const PlayerScreen = ({ route, navigation }: any) => {
     }
 
     return (
-        <TouchableWithoutFeedback onPress={resetControlsTimer}>
-            <View style={styles.container}>
-                <VLCPlayer
-                    ref={vlcRef}
-                    source={{ uri: streamUrl }}
-                    style={styles.fullScreen}
-                    paused={isPaused}
-                    autoplay={true}
-                    videoAspectRatio="16:9"
-                    onProgress={(e: any) => {
-                        setCurrentTime(e.currentTime);
-                        setDuration(e.duration);
-                    }}
-                    onError={(e: any) => console.error('VLC Error:', e)}
-                    onEnd={() => navigation.goBack()}
-                />
+        <View style={styles.container}>
+            <TouchableWithoutFeedback onPress={toggleControls}>
+                <View style={styles.playerWrapper}>
+                    <VLCPlayer
+                        ref={vlcRef}
+                        source={{ uri: streamUrl }}
+                        style={styles.fullScreen}
+                        paused={isPaused}
+                        autoplay={true}
+                        videoAspectRatio="16:9"
+                        onProgress={(e: any) => {
+                            setCurrentTime(e.currentTime);
+                            setDuration(e.duration);
+                        }}
+                        onError={(e: any) => console.error('VLC Error:', e)}
+                        onEnd={() => navigation.goBack()}
+                    />
+                </View>
+            </TouchableWithoutFeedback>
 
-                {showControls && (
-                    <View style={styles.controlsContainer}>
-                        {/* Top Bar */}
-                        <View style={styles.topBar}>
-                            <TouchableOpacity style={styles.iconButton} onPress={() => navigation.goBack()}>
-                                <Text style={styles.iconText}>←</Text>
+            {showControls && (
+                <Animated.View
+                    style={[styles.controlsOverlay, { opacity: opacityAnim }]}
+                    pointerEvents="box-none"
+                >
+                    {/* Floating Top Bar */}
+                    <View style={styles.topContainer}>
+                        <BlurView style={styles.topPill} blurType="dark" blurAmount={15} reducedTransparencyFallbackColor="black">
+                            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+                                <Text style={styles.backButtonText}>✕</Text>
                             </TouchableOpacity>
-                            <Text style={styles.streamTitle} numberOfLines={1}>
-                                {streamType.toUpperCase()} {streamId}
-                            </Text>
-                        </View>
+                            <View style={styles.titleWrapper}>
+                                <Text style={styles.streamTitle} numberOfLines={1}>
+                                    {streamType.toUpperCase()}
+                                </Text>
+                            </View>
+                        </BlurView>
+                    </View>
 
-                        {/* Middle Controls */}
-                        <View style={styles.middleControls}>
-                            <TouchableOpacity style={styles.skipButton} onPress={() => jump(-15)}>
-                                <Text style={styles.skipText}>-15s</Text>
+                    {/* Middle Controls - Floating Circle Islands */}
+                    <View style={styles.midContainer}>
+                        <BlurView style={styles.skipPill} blurType="dark" blurAmount={20}>
+                            <TouchableOpacity style={styles.midButton} onPress={() => jump(-15)}>
+                                <Text style={styles.midButtonText}>↺</Text>
+                                <Text style={styles.skipLabel}>15</Text>
                             </TouchableOpacity>
+                        </BlurView>
 
-                            <TouchableOpacity style={styles.playIconButton} onPress={togglePlayPause}>
+                        <BlurView style={styles.playPill} blurType="dark" blurAmount={25}>
+                            <TouchableOpacity style={styles.playPauseButton} onPress={togglePlayPause}>
                                 <Text style={styles.playPauseIcon}>{isPaused ? '▶' : '⏸'}</Text>
                             </TouchableOpacity>
+                        </BlurView>
 
-                            <TouchableOpacity style={styles.skipButton} onPress={() => jump(15)}>
-                                <Text style={styles.skipText}>+15s</Text>
+                        <BlurView style={styles.skipPill} blurType="dark" blurAmount={20}>
+                            <TouchableOpacity style={styles.midButton} onPress={() => jump(15)}>
+                                <Text style={styles.midButtonText}>↻</Text>
+                                <Text style={styles.skipLabel}>15</Text>
                             </TouchableOpacity>
-                        </View>
+                        </BlurView>
+                    </View>
 
-                        {/* Bottom Bar */}
-                        <View style={styles.bottomBar}>
-                            <Text style={styles.timeText}>{formatTime(currentTime)}</Text>
+                    {/* Floating Bottom Slider Bar */}
+                    <View style={styles.bottomContainer}>
+                        <BlurView style={styles.bottomPill} blurType="dark" blurAmount={20}>
+                            <Text style={styles.timeLabel}>{formatTime(currentTime)}</Text>
                             <Slider
                                 style={styles.slider}
                                 minimumValue={0}
@@ -160,16 +209,16 @@ const PlayerScreen = ({ route, navigation }: any) => {
                                 value={currentTime}
                                 onValueChange={handleSeek}
                                 onSlidingComplete={handleSlidingComplete}
-                                minimumTrackTintColor="#007AFF"
-                                maximumTrackTintColor="rgba(255,255,255,0.3)"
-                                thumbTintColor="#007AFF"
+                                minimumTrackTintColor="#FFF"
+                                maximumTrackTintColor="rgba(255,255,255,0.2)"
+                                thumbTintColor="#FFF"
                             />
-                            <Text style={styles.timeText}>{formatTime(duration)}</Text>
-                        </View>
+                            <Text style={styles.timeLabel}>{formatTime(duration)}</Text>
+                        </BlurView>
                     </View>
-                )}
-            </View>
-        </TouchableWithoutFeedback>
+                </Animated.View>
+            )}
+        </View>
     );
 };
 
@@ -177,6 +226,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#000',
+    },
+    playerWrapper: {
+        flex: 1,
     },
     fullScreen: {
         width: '100%',
@@ -188,75 +240,132 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#000',
     },
-    controlsContainer: {
+    controlsOverlay: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0,0,0,0.4)',
         justifyContent: 'space-between',
-        padding: 20,
+        paddingVertical: 30,
+        paddingHorizontal: 40,
     },
-    topBar: {
-        flexDirection: 'row',
+    // Top Bar Styles
+    topContainer: {
         alignItems: 'center',
     },
-    iconButton: {
-        padding: 10,
+    topPill: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        borderRadius: 30,
+        paddingHorizontal: 8,
+        paddingVertical: 6,
+        overflow: 'hidden',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.15)',
     },
-    iconText: {
+    backButton: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: 'rgba(255,255,255,0.1)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    backButtonText: {
         color: '#fff',
-        fontSize: 30,
-        fontWeight: 'bold',
+        fontSize: 18,
+        fontWeight: '200',
+    },
+    titleWrapper: {
+        paddingHorizontal: 20,
+        maxWidth: 250,
     },
     streamTitle: {
         color: '#fff',
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginLeft: 10,
-        flex: 1,
+        fontSize: 14,
+        fontWeight: '600',
+        letterSpacing: 0.5,
     },
-    middleControls: {
+    // Mid Controls Styles
+    midContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 60,
+        gap: 30,
     },
-    playIconButton: {
-        width: 80,
-        height: 80,
-        borderRadius: 40,
-        backgroundColor: 'rgba(0,0,0,0.3)',
+    skipPill: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        overflow: 'hidden',
+        backgroundColor: 'rgba(255,255,255,0.05)',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.08)',
+    },
+    midButton: {
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        borderWidth: 1,
+    },
+    midButtonText: {
+        color: '#fff',
+        fontSize: 24,
+    },
+    skipLabel: {
+        color: '#fff',
+        fontSize: 10,
+        fontWeight: 'bold',
+        marginTop: -2,
+    },
+    playPill: {
+        width: 90,
+        height: 90,
+        borderRadius: 45,
+        overflow: 'hidden',
+        backgroundColor: 'rgba(255,255,255,0.1)',
+        borderWidth: 1.5,
         borderColor: 'rgba(255,255,255,0.2)',
+        shadowColor: "#FFF",
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.2,
+        shadowRadius: 15,
+    },
+    playPauseButton: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     playPauseIcon: {
         color: '#fff',
-        fontSize: 40,
+        fontSize: 44,
+        includeFontPadding: false,
+        textAlignVertical: 'center',
     },
-    skipButton: {
-        padding: 10,
+    // Bottom Bar Styles
+    bottomContainer: {
+        alignItems: 'center',
     },
-    skipText: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: '600',
-    },
-    bottomBar: {
+    bottomPill: {
+        width: '90%',
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.3)',
-        padding: 15,
-        borderRadius: 12,
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        borderRadius: 30,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        overflow: 'hidden',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.15)',
     },
-    timeText: {
+    timeLabel: {
         color: '#fff',
-        fontSize: 14,
-        width: 60,
+        fontSize: 12,
+        fontWeight: '500',
+        width: 50,
         textAlign: 'center',
     },
     slider: {
         flex: 1,
         height: 40,
+        marginHorizontal: 10,
     },
 });
 
