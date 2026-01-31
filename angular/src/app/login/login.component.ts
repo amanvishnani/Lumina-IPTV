@@ -17,9 +17,9 @@ export class LoginComponent {
   private router = inject(Router);
 
   loginForm = this.fb.group({
-    url: ['REDACTED_URL', Validators.required],
-    username: ['REDACTED_USER', Validators.required],
-    password: ['REDACTED_PASS', Validators.required]
+    url: [(import.meta as any).env?.NG_APP_DEFAULT_URL || '', Validators.required],
+    username: [(import.meta as any).env?.NG_APP_DEFAULT_USERNAME || '', Validators.required],
+    password: [(import.meta as any).env?.NG_APP_DEFAULT_PASSWORD || '', Validators.required]
   });
 
   error = '';

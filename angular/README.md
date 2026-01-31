@@ -6,6 +6,20 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
+## Environment Variables
+
+This project uses `@ngx-env/builder` to support environment variables from a `.env` file.
+
+1.  Create a `.env` file in the `angular/` directory (you can use `.env.sample` as a template).
+2.  Add your IPTV credentials:
+    ```env
+    NG_APP_DEFAULT_URL=http://your-iptv-url:port
+    NG_APP_DEFAULT_USERNAME=your-username
+    NG_APP_DEFAULT_PASSWORD=your-password
+    ```
+
+The application will use these values as defaults in the login form.
+
 ## Code scaffolding
 
 Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
