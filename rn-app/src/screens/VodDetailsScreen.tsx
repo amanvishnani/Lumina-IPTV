@@ -16,6 +16,7 @@ import { xtreamService } from '../services/xtreamService';
 import { XtreamVodInfo } from '../types';
 import { showPlayerPicker } from '../utils/playerUtils';
 import { responsiveFontSize, spacing, moderateScale } from '../utils/responsive';
+import { CONFIG } from '../config';
 import { downloadService, DownloadMetadata } from '../services/downloadService';
 
 const VodDetailsScreen = ({ route, navigation }: any) => {
@@ -34,9 +35,11 @@ const VodDetailsScreen = ({ route, navigation }: any) => {
 
     useEffect(() => {
         fetchMovieInfo();
-        checkDownload();
-        const interval = setInterval(checkDownload, 2000);
-        return () => clearInterval(interval);
+        if (CONFIG.features.enableDownloads) {
+            checkDownload();
+            const interval = setInterval(checkDownload, 2000);
+            return () => clearInterval(interval);
+        }
     }, [streamId, checkDownload]);
 
     const fetchMovieInfo = async () => {
@@ -87,6 +90,7 @@ const VodDetailsScreen = ({ route, navigation }: any) => {
     };
 
     const handleDownload = async () => {
+        if (!CONFIG.features.enableDownloads) return;
         if (!movieInfo) return;
         const streamData = movieInfo.movie_data;
         if (!streamData) {
@@ -186,20 +190,22 @@ const VodDetailsScreen = ({ route, navigation }: any) => {
                                 movie_data.stream_id,
                                 'movie',
                                 movie_data.container_extension || 'mp4',
-                                download?.downloadedSize && download.downloadedSize > 0 ? download.filePath : undefined
+                                (CONFIG.features.enableDownloads && download?.downloadedSize && download.downloadedSize > 0) ? download.filePath : undefined
                             )}
                         >
                             <Text style={styles.playButtonText}>Play</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[styles.downloadButton, downloading && styles.downloadingButton]}
-                            onPress={handleDownload}
-                            disabled={downloading}
-                        >
-                            <Text style={styles.downloadButtonText}>
-                                {downloading ? `Downloading ${Math.round(downloadProgress * 100)}%` : 'Download'}
-                            </Text>
-                        </TouchableOpacity>
+                        {CONFIG.features.enableDownloads && (
+                            <TouchableOpacity
+                                style={[styles.downloadButton, downloading && styles.downloadingButton]}
+                                onPress={handleDownload}
+                                disabled={downloading}
+                            >
+                                <Text style={styles.downloadButtonText}>
+                                    {downloading ? `Downloading ${Math.round(downloadProgress * 100)}%` : 'Download'}
+                                </Text>
+                            </TouchableOpacity>
+                        )}
                     </View>
 
                     {info.youtube_trailer && (

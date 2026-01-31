@@ -16,6 +16,7 @@ import { downloadService, DownloadMetadata } from '../services/downloadService';
 import { XtreamSeriesInfo, XtreamEpisode } from '../types';
 import { showPlayerPicker } from '../utils/playerUtils';
 import { responsiveFontSize, spacing, moderateScale } from '../utils/responsive';
+import { CONFIG } from '../config';
 
 const SeriesDetailsScreen = ({ route, navigation }: any) => {
     const { seriesId } = route.params;
@@ -51,12 +52,15 @@ const SeriesDetailsScreen = ({ route, navigation }: any) => {
     }, [seriesId]);
 
     useEffect(() => {
-        loadDownloads();
-        const interval = setInterval(loadDownloads, 2000);
-        return () => clearInterval(interval);
+        if (CONFIG.features.enableDownloads) {
+            loadDownloads();
+            const interval = setInterval(loadDownloads, 2000);
+            return () => clearInterval(interval);
+        }
     }, [loadDownloads]);
 
     const handleDownload = async (episode: XtreamEpisode) => {
+        if (!CONFIG.features.enableDownloads) return;
         try {
             const title = `${seriesInfo?.info?.name} - S${episode.season}E${episode.episode_num}: ${episode.title}`;
             await downloadService.startDownload(
@@ -73,6 +77,7 @@ const SeriesDetailsScreen = ({ route, navigation }: any) => {
     };
 
     const handleCancelDownload = async (downloadId: string) => {
+        if (!CONFIG.features.enableDownloads) return;
         await downloadService.cancelDownload(downloadId);
         loadDownloads();
     };
@@ -177,7 +182,7 @@ const SeriesDetailsScreen = ({ route, navigation }: any) => {
                                                 ep.id,
                                                 'series',
                                                 ep.container_extension || 'mp4',
-                                                download?.downloadedSize && download.downloadedSize > 0 ? download.filePath : undefined
+                                                (CONFIG.features.enableDownloads && download?.downloadedSize && download.downloadedSize > 0) ? download.filePath : undefined
                                             )}
                                         >
                                             <View style={styles.epNumContainer}>
@@ -192,40 +197,42 @@ const SeriesDetailsScreen = ({ route, navigation }: any) => {
                                                         </View>
                                                         <Text style={styles.progressText}>{Math.round(progress * 100)}%</Text>
                                                     </View>
-                                                ) : isFailed ? (
+                                                ) : isFailed && CONFIG.features.enableDownloads ? (
                                                     <Text style={[styles.epMeta, { color: '#FF3B30' }]}>
                                                         ⚠ Failed. Tap icon to retry.
                                                     </Text>
                                                 ) : (
                                                     <Text style={styles.epMeta}>
-                                                        {isCompleted ? '✓ Downloaded' : 'Tap to play'}
+                                                        {(CONFIG.features.enableDownloads && isCompleted) ? '✓ Downloaded' : 'Tap to play'}
                                                     </Text>
                                                 )}
                                             </View>
                                         </TouchableOpacity>
 
-                                        <TouchableOpacity
-                                            style={[
-                                                styles.downloadButton,
-                                                isDownloading && styles.downloadButtonActive,
-                                                isCompleted && styles.downloadButtonCompleted,
-                                                isFailed && styles.downloadButtonFailed
-                                            ]}
-                                            onPress={() => {
-                                                if (isDownloading) {
-                                                    handleCancelDownload(download.id);
-                                                } else if (isFailed) {
-                                                    downloadService.resumeDownload(download.id).then(() => loadDownloads());
-                                                } else if (!isCompleted) {
-                                                    handleDownload(ep);
-                                                }
-                                            }}
-                                            disabled={isCompleted}
-                                        >
-                                            <Text style={styles.downloadIcon}>
-                                                {isDownloading ? '✕' : isCompleted ? '✓' : isFailed ? '🔄' : '📥'}
-                                            </Text>
-                                        </TouchableOpacity>
+                                        {CONFIG.features.enableDownloads && (
+                                            <TouchableOpacity
+                                                style={[
+                                                    styles.downloadButton,
+                                                    isDownloading && styles.downloadButtonActive,
+                                                    isCompleted && styles.downloadButtonCompleted,
+                                                    isFailed && styles.downloadButtonFailed
+                                                ]}
+                                                onPress={() => {
+                                                    if (isDownloading) {
+                                                        handleCancelDownload(download.id);
+                                                    } else if (isFailed) {
+                                                        downloadService.resumeDownload(download.id).then(() => loadDownloads());
+                                                    } else if (!isCompleted) {
+                                                        handleDownload(ep);
+                                                    }
+                                                }}
+                                                disabled={isCompleted}
+                                            >
+                                                <Text style={styles.downloadIcon}>
+                                                    {isDownloading ? '✕' : isCompleted ? '✓' : isFailed ? '🔄' : '📥'}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        )}
 
                                         <TouchableOpacity
                                             style={styles.playIconButton}
@@ -233,7 +240,7 @@ const SeriesDetailsScreen = ({ route, navigation }: any) => {
                                                 ep.id,
                                                 'series',
                                                 ep.container_extension || 'mp4',
-                                                download?.downloadedSize && download.downloadedSize > 0 ? download.filePath : undefined
+                                                (CONFIG.features.enableDownloads && download?.downloadedSize && download.downloadedSize > 0) ? download.filePath : undefined
                                             )}
                                         >
                                             <Text style={styles.playIcon}>▶</Text>

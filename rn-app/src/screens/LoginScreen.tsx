@@ -12,11 +12,12 @@ import {
     ScrollView,
 } from 'react-native';
 import { xtreamService } from '../services/xtreamService';
+import { CONFIG } from '../config';
 
 const LoginScreen = ({ navigation }: any) => {
-    const [url, setUrl] = useState('REDACTED_URL');
-    const [username, setUsername] = useState('REDACTED_USER');
-    const [password, setPassword] = useState('REDACTED_PASS');
+    const [url, setUrl] = useState(CONFIG.defaults.url);
+    const [username, setUsername] = useState(CONFIG.defaults.username);
+    const [password, setPassword] = useState(CONFIG.defaults.password);
     const [loading, setLoading] = useState(false);
 
     const handleLogin = async () => {

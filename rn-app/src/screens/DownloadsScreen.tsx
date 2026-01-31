@@ -13,6 +13,7 @@ import {
 import { downloadService, DownloadMetadata } from '../services/downloadService';
 import { responsiveFontSize, spacing, moderateScale, getGridColumns } from '../utils/responsive';
 import { showPlayerPicker } from '../utils/playerUtils';
+import { CONFIG } from '../config';
 
 const DownloadsScreen = () => {
     const [downloads, setDownloads] = useState<DownloadMetadata[]>([]);
@@ -175,6 +176,20 @@ const DownloadsScreen = () => {
             </Text>
         </View>
     );
+
+    if (!CONFIG.features.enableDownloads) {
+        return (
+            <SafeAreaView style={styles.container}>
+                <View style={styles.emptyContainer}>
+                    <Text style={styles.emptyIcon}>🚫</Text>
+                    <Text style={styles.emptyTitle}>Feature Disabled</Text>
+                    <Text style={styles.emptyText}>
+                        The download feature is currently disabled in the configuration.
+                    </Text>
+                </View>
+            </SafeAreaView>
+        );
+    }
 
     return (
         <SafeAreaView style={styles.container}>

@@ -1,97 +1,113 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# IPTV Premium - React Native Edition 📺
 
-# Getting Started
+A high-performance, premium IPTV application built with React Native. This app connects to any Xtream Codes compatible provider to deliver a seamless streaming experience for Live TV, Movies, and Series.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+---
 
-## Step 1: Start Metro
+## 🚀 Key Features
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+### For Users
+- **Live TV**: Full EPG support (where available) with category-based browsing and instant search.
+- **VOD (Movies)**: Detailed metadata including ratings, cast, movie posters, and high-quality backdrops.
+- **Series & Episodes**: Season-by-season breakdown with episode summaries and progress tracking.
+- **Multiple Players**: Choose your favorite rendering engine. Support for internal player, **Infuse**, and **VLC**.
+- **Audio & Subtitles**: Easily switch between available audio tracks and local/embedded subtitles.
+- **Optimized for Large Screens**: Native support for iPad and Android tablets with responsive layouts.
+- **Offline Viewing**: Optional background download system for watching your favorite content without an internet connection.
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+### For Developers
+- **TypeScript First**: Fully typed codebase for maximum reliability.
+- **Modular Navigation**: Clean separation between Auth and App flows using React Navigation.
+- **Native Background Downloads**: Leverages `@kesha-antonov/react-native-background-downloader` for true OS-level backgrounding.
+- **Feature Flags**: Toggle complex features (like downloads) globally using a central config.
+- **Optimized Caching**: Smart local caching of categories and stream metadata to reduce API load.
 
-```sh
-# Using npm
+---
+
+## 🛠️ Getting Started
+
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v18 or newer)
+- [React Native CLI](https://reactnative.dev/docs/environment-setup)
+- Xcode (for iOS development)
+- Android Studio (for Android development)
+
+### Installation
+1. **Clone the repository**
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+3. **Install CocoaPods (iOS only)**:
+   ```bash
+   cd ios && pod install && cd ..
+   ```
+
+### Configuration
+You can manage app behavior and default credentials in `src/config.ts`:
+```typescript
+export const CONFIG = {
+    features: {
+        enableDownloads: false, // Toggle offline download functionality
+    },
+};
+```
+
+#### 🔐 Environment Variables
+For security and convenience, default login credentials are managed via a `.env` file.
+1. **Create your .env file** (gitignored):
+   ```bash
+   cp .env.sample .env
+   ```
+2. **Edit `.env`** with your credentials:
+   ```env
+   DEFAULT_URL=http://your-provider.com:80
+   DEFAULT_USERNAME=your_username
+   DEFAULT_PASSWORD=your_password
+   ```
+The app will automatically pre-fill these values on the login screen.
+
+---
+
+## 🖥️ Development
+
+### Start the development server
+```bash
 npm start
-
-# OR using Yarn
-yarn start
 ```
 
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
+### Run on iOS
+```bash
 npm run ios
-
-# OR using Yarn
-yarn ios
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+### Run on Android
+```bash
+npm run android
+```
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+---
 
-## Step 3: Modify your app
+## 📖 User Guide
+1. **Login**: Launch the app and enter your IPTV credentials (URL, Username, Password).
+2. **Browsing**: Use the bottom tabs to switch between **Live TV**, **Movies**, and **Series**.
+3. **Watching**: Tap any content to see details. Press **Play** to start streaming.
+4. **Player Options**: If you have Infuse or VLC installed, the app will offer you the choice to open the stream in those players for advanced playback features.
+5. **Downloads (if enabled)**: Tap the **Download** button on a movie or episode. You can close the app, and the download will continue in the background. Access your files via the **Downloads** tab.
 
-Now that you have successfully run the app, let's make changes!
+---
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+## 🏗️ Architecture
+- **`/src/services`**: Core business logic (API, Downloads, Storage).
+- **`/src/screens`**: Feature-specific UI components.
+- **`/src/utils`**: Helper functions for responsive UI, player selection, and formatting.
+- **`/src/navigation`**: Bottom tab and Stack navigation configuration.
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+---
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+## 📄 Requirements Documentation
+Detailed technical requirements can be found in the `/requirements` folder:
+- [Core Navigation](../requirements/app.component.md)
+- [Live TV Hub](../requirements/dashboard.component.md)
+- [VOD Details](../requirements/vod-details.component.md)
+- [Series Management](../requirements/series-details.component.md)

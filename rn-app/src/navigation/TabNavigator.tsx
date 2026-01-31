@@ -7,6 +7,7 @@ import SeriesListScreen from '../screens/SeriesListScreen';
 import DownloadsScreen from '../screens/DownloadsScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import { responsiveFontSize, moderateScale, spacing } from '../utils/responsive';
+import { CONFIG } from '../config';
 
 const Tab = createBottomTabNavigator();
 
@@ -71,14 +72,18 @@ export default function TabNavigator() {
                     tabBarIcon: ({ focused }) => <TabIcon label="Series" focused={focused} />,
                 }}
             />
-            <Tab.Screen
-                name="Downloads"
-                component={DownloadsScreen}
-                options={{
-                    tabBarLabel: 'Downloads',
-                    tabBarIcon: ({ focused }) => <TabIcon label="Downloads" focused={focused} />,
-                }}
-            />
+
+            {CONFIG.features.enableDownloads && (
+                <Tab.Screen
+                    name="Downloads"
+                    component={DownloadsScreen}
+                    options={{
+                        tabBarLabel: 'Downloads',
+                        tabBarIcon: ({ focused }) => <TabIcon label="Downloads" focused={focused} />,
+                    }}
+                />
+            )}
+
             <Tab.Screen
                 name="Settings"
                 component={SettingsScreen}
